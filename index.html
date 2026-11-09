@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jago Matematika bersama Dokter Faiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFCF6; --grid:#DCE7F3; --ink:#1F2A5A; --muted:#5D6690; --margin:#E25C5C;
+  --card:#FFFFFF; --line:#C9D6E8; --hl:#FFE066; --good:#1E9E5A; --good-bg:#E2F5EA; --bad:#D23F44; --bad-bg:#FCE6E7;
+  --k3:#E07A10; --k4:#2A7FCC; --k5:#7A4FD8; --k6:#0E8C7E; --shade:#F2994A; --on-c:#FFFFFF;
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1C2A24; --grid:#26372F; --ink:#EEF3EA; --muted:#A9BBAF; --margin:#E98A8A;
+    --card:#23332C; --line:#3A4F45; --hl:#8C7A1E; --good:#5BD593; --good-bg:#1F4232; --bad:#F2878A; --bad-bg:#4A2629;
+    --k3:#C76A0A; --k4:#2672B8; --k5:#6E45C7; --k6:#0C7C70; --shade:#F2A65A; --on-c:#FFFFFF;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1C2A24; --grid:#26372F; --ink:#EEF3EA; --muted:#A9BBAF; --margin:#E98A8A;
+  --card:#23332C; --line:#3A4F45; --hl:#8C7A1E; --good:#5BD593; --good-bg:#1F4232; --bad:#F2878A; --bad-bg:#4A2629;
+  --k3:#C76A0A; --k4:#2672B8; --k5:#6E45C7; --k6:#0C7C70; --shade:#F2A65A; --on-c:#FFFFFF;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--ink); background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  font-family:'Fredoka',ui-rounded,'Segoe UI',system-ui,sans-serif; font-size:18px; line-height:1.45;
+}
+#app{max-width:720px; margin:0 auto; padding:18px 16px 48px}
+button{font:inherit; color:inherit; cursor:pointer}
+button:focus-visible{outline:3px solid var(--k4); outline-offset:2px}
+.top{display:flex; justify-content:space-between; align-items:center; gap:12px}
+.brand{font-weight:700; font-size:1.3rem}
+.pts{background:var(--hl); color:var(--ink); border-radius:999px; padding:2px 14px; font-weight:600}
+h1{font-size:1.75rem; line-height:1.15; margin:22px 0 14px; font-weight:700}
+h2{font-size:1.25rem; margin:26px 0 10px; font-weight:600}
+
+/* ---------- Dokter Faiz ---------- */
+.fz{flex:none; width:120px}
+.fz.sm{width:84px}
+.fz.lg{width:150px}
+.fz svg{display:block; width:100%; height:auto; overflow:visible}
+.fz svg g{transform-box:view-box}
+.fz-all{transform-origin:100px 222px; animation:bob 2.6s ease-in-out infinite}
+.eyes{transform-origin:100px 90px; animation:blink 4.2s infinite}
+.arm-r{transform-origin:139px 152px; transform:rotate(-8deg); transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.arm-l{transform-origin:61px 152px; transform:rotate(8deg); transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.fz .m{display:none} .fz .m-idle{display:inline}
+.fz.waving .arm-r{animation:wave 1.1s ease-in-out infinite}
+.fz.mood-happy .fz-all{animation:jump .65s cubic-bezier(.3,1.4,.5,1) 2}
+.fz.mood-happy .arm-r{transform:rotate(-155deg)}
+.fz.mood-happy .arm-l{transform:rotate(155deg)}
+.fz.mood-happy .m-idle,.fz.mood-sad .m-idle{display:none}
+.fz.mood-happy .m-happy{display:inline}
+.fz.mood-sad .m-sad{display:inline}
+.fz.mood-sad .fz-all{animation:tilt 1.4s ease-in-out}
+.fz.mood-sad .arm-l{transform:rotate(-30deg)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes wave{0%,100%{transform:rotate(-150deg)}50%{transform:rotate(-115deg)}}
+@keyframes jump{0%{transform:translateY(0) scale(1,1)}20%{transform:translateY(0) scale(1.08,.9)}50%{transform:translateY(-28px) scale(.95,1.06)}80%{transform:translateY(0) scale(1.05,.95)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes tilt{0%{transform:rotate(0)}30%{transform:rotate(-8deg)}60%{transform:rotate(5deg)}100%{transform:rotate(0)}}
+
+.bubble{position:relative; background:var(--card); border:2px solid var(--line); border-radius:16px; padding:10px 14px; font-weight:500; line-height:1.3}
+.bubble::before{content:""; position:absolute; left:-11px; top:50%; margin-top:-9px; border:9px solid transparent; border-right-color:var(--line); border-left:0}
+.bubble::after{content:""; position:absolute; left:-8px; top:50%; margin-top:-7px; border:7px solid transparent; border-right-color:var(--card); border-left:0}
+.bubble.pop{animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.85); opacity:.3}100%{transform:scale(1); opacity:1}}
+.hero{display:flex; align-items:center; gap:16px; margin:18px 0 16px}
+.hero .bubble{font-size:1.25rem}
+.hero .bubble b{font-weight:700}
+.coach{display:flex; align-items:center; gap:14px; margin:12px 0 10px}
+
+.hdr-r{display:flex; align-items:center; gap:8px}
+.snd{width:40px; height:40px; border-radius:50%; border:2px solid var(--line); background:var(--card); font-size:1.1rem; line-height:1; padding:0}
+/* ---------- aktivasi ---------- */
+.act label{display:block; font-weight:500; margin:12px 0 6px}
+.act input{width:100%; font:inherit; font-size:1.1rem; padding:12px 14px; border:2px solid var(--line); border-radius:12px; background:var(--paper); color:var(--ink)}
+.act input:focus{outline:none; border-color:var(--c)}
+.act.shake{animation:shake .4s}
+.act .mix{margin-top:18px; text-align:center}
+.owner{text-align:center; margin-top:14px}
+/* ---------- menu ---------- */
+.tabs{display:grid; grid-template-columns:repeat(4,1fr); gap:8px}
+.tab{border:2px solid var(--line); background:var(--card); border-radius:12px; padding:8px 4px; font-weight:600}
+.tab.on{background:var(--c); border-color:var(--c); color:var(--on-c)}
+.mix{display:block; width:100%; margin:16px 0 12px; padding:14px 18px; border:0; border-radius:16px; background:var(--c); color:var(--on-c); font-weight:700; font-size:1.2rem; text-align:left; box-shadow:0 5px 0 color-mix(in srgb,var(--c) 60%,#000); transition:transform .08s, box-shadow .08s}
+.mix small{display:block; font-weight:400; font-size:.92rem}
+.mix:active{transform:translateY(4px); box-shadow:0 1px 0 color-mix(in srgb,var(--c) 60%,#000)}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:10px}
+.tcard{background:var(--card); border:2px solid var(--line); border-radius:14px; padding:12px 14px; text-align:left; display:flex; flex-direction:column; gap:4px; min-height:118px; box-shadow:0 4px 0 var(--line); transition:transform .08s, box-shadow .08s}
+.tcard:hover{border-color:var(--c)}
+.tcard:active{transform:translateY(3px); box-shadow:0 1px 0 var(--line)}
+.tcard .ic{font-size:1.7rem}
+.tcard b{font-weight:600; line-height:1.2}
+.tcard .acc{font-size:.85rem; color:var(--muted); margin-top:auto}
+.tcard .new{align-self:flex-start; font-size:.75rem; background:var(--hl); color:var(--ink); border-radius:999px; padding:0 8px}
+.plain{background:none; border:2px dashed var(--line); border-radius:12px; padding:10px 14px; width:100%; margin-top:18px; font-weight:500}
+
+/* ---------- kuis ---------- */
+.qtop{display:flex; align-items:center; gap:10px}
+.x{width:40px; height:40px; border-radius:50%; border:2px solid var(--line); background:var(--card); flex:none}
+.bar{flex:1; height:16px; border-radius:999px; background:var(--card); border:2px solid var(--line); overflow:hidden}
+.bar i{display:block; height:100%; background:var(--c); border-radius:999px; transition:width .45s cubic-bezier(.3,1.4,.5,1); position:relative}
+.bar i::after{content:""; position:absolute; left:8px; right:8px; top:3px; height:3px; border-radius:2px; background:#fff; opacity:.35}
+.cnt{font-weight:600; min-width:44px; text-align:right}
+.streak{font-weight:700; color:var(--k3); min-width:44px; text-align:center}
+.streak.bump{animation:pop .4s cubic-bezier(.3,1.8,.5,1)}
+.page{position:relative; background:var(--card); border:2px solid var(--line); border-radius:6px 18px 18px 6px; padding:20px 18px 20px 40px; text-align:center}
+.page::before{content:""; position:absolute; top:0; bottom:0; left:24px; width:2px; background:var(--margin); opacity:.7}
+.label{font-size:1.1rem; margin-bottom:8px}
+.qtext{font-size:2.2rem; font-weight:600; line-height:1.25}
+.qtext.long{font-size:1.25rem; font-weight:500; line-height:1.4; text-align:left}
+.box{display:inline-block; min-width:1.3em; border:3px dashed var(--c); border-radius:10px; padding:0 .2em; color:var(--c); line-height:1.1}
+.vis{margin-top:10px}
+.vis svg{max-width:100%; height:auto}
+.growbar{transform-box:fill-box; transform-origin:bottom; animation:grow .6s ease-out both}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.opts{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px}
+.opt{position:relative; background:var(--card); border:2px solid var(--line); border-radius:14px; padding:14px 8px; font-size:1.4rem; font-weight:600; min-height:72px; box-shadow:0 4px 0 var(--line); transition:transform .08s, box-shadow .08s}
+.opt:not(:disabled):hover{border-color:var(--c)}
+.opt:not(:disabled):active{transform:translateY(3px); box-shadow:0 1px 0 var(--line)}
+.opt.right{background:var(--good-bg); border-color:var(--good); box-shadow:0 4px 0 var(--good); animation:pop .35s cubic-bezier(.3,1.8,.5,1)}
+.opt.wrong{background:var(--bad-bg); border-color:var(--bad); box-shadow:0 4px 0 var(--bad); animation:shake .4s}
+.opt:disabled{cursor:default}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.xp{position:absolute; left:50%; top:0; font-size:1rem; font-weight:700; color:var(--good); pointer-events:none; animation:xp 1s ease-out forwards}
+@keyframes xp{from{opacity:1; transform:translate(-50%,0)}to{opacity:0; transform:translate(-50%,-56px)}}
+.fb{margin-top:16px; border-radius:14px; padding:14px 16px; border:2px solid; animation:slide .35s ease-out}
+@keyframes slide{from{opacity:0; transform:translateY(16px)}to{opacity:1; transform:none}}
+.fb.good{background:var(--good-bg); border-color:var(--good)}
+.fb.bad{background:var(--bad-bg); border-color:var(--bad)}
+.fb b{font-size:1.2rem; font-weight:600; display:block}
+.note{font-family:'Patrick Hand','Comic Sans MS',cursive; font-size:1.3rem; line-height:1.5; margin:8px 0 4px}
+details summary{cursor:pointer; font-weight:500; margin-top:6px}
+.next{margin-top:12px; width:100%; border:0; border-radius:12px; padding:12px; background:var(--c); color:var(--on-c); font-weight:700; font-size:1.15rem; box-shadow:0 4px 0 color-mix(in srgb,var(--c) 60%,#000)}
+.next:active{transform:translateY(3px); box-shadow:0 1px 0 color-mix(in srgb,var(--c) 60%,#000)}
+.fr{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; line-height:1.05; margin:0 .12em; font-size:.85em}
+.fr span:first-child{border-bottom:2px solid currentColor; padding:0 .2em .05em}
+.fr span:last-child{padding:.05em .2em 0}
+
+/* ---------- hasil ---------- */
+.res{text-align:center}
+.res .fz{margin:14px auto 0}
+.stars{font-size:3rem; letter-spacing:6px}
+.stars span{display:inline-block; animation:starpop .5s cubic-bezier(.3,1.8,.5,1) both}
+@keyframes starpop{from{transform:scale(0) rotate(-40deg)}to{transform:scale(1) rotate(0)}}
+.res p{margin:6px 0}
+.wcard{background:var(--card); border:2px solid var(--line); border-radius:14px; padding:12px 16px; margin:10px 0; text-align:left}
+.wq{font-size:1.3rem; font-weight:600}
+
+/* ---------- laporan ---------- */
+.rrow{background:var(--card); border:2px solid var(--line); border-radius:12px; padding:10px 14px; margin:8px 0}
+.rname{display:flex; justify-content:space-between; gap:8px; font-weight:500}
+.rname small{color:var(--muted); font-weight:400; white-space:nowrap}
+.rline{display:flex; align-items:center; gap:10px; margin-top:6px}
+.rbar{flex:1; height:10px; background:var(--paper); border-radius:999px; overflow:hidden; border:1px solid var(--line)}
+.rbar i{display:block; height:100%}
+.badge{font-size:.85rem; padding:1px 10px; border-radius:999px; white-space:nowrap}
+.low{background:var(--bad)} .badge.low{background:var(--bad-bg); color:var(--bad); border:1px solid var(--bad)}
+.mid{background:var(--shade)} .badge.mid{background:var(--hl); color:var(--ink)}
+.ok{background:var(--good)} .badge.ok{background:var(--good-bg); color:var(--good); border:1px solid var(--good)}
+.badge.nd{color:var(--muted); border:1px solid var(--line)}
+.focus{background:var(--hl); border-radius:12px; padding:10px 14px; margin-top:12px}
+.small{color:var(--muted); font-size:.9rem}
+
+.confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:50}
+.confetti i{position:absolute; top:-16px; width:9px; height:14px; border-radius:2px; animation:fall linear forwards}
+@keyframes fall{to{transform:translate(var(--dx),105vh) rotate(var(--r))}}
+
+@media (max-width:420px){ .qtext{font-size:1.9rem} .opt{font-size:1.2rem} h1{font-size:1.5rem} .hero .bubble{font-size:1.1rem} .fz{width:100px} .fz.sm{width:72px} }
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important; transition:none!important} }
+/* ---------- v3: navigasi, XP, hafalan, permainan ---------- */
+#app{padding-bottom:112px}
+.prof{display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:3px 14px 3px 6px;font-weight:600;min-width:0;max-width:46vw}
+.prof .av{font-size:1.4rem}.prof .pn{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.hdr-r{gap:6px}
+.chip{background:var(--card);border:2px solid var(--line);border-radius:999px;padding:3px 9px;font-weight:700;font-size:.88rem;white-space:nowrap}
+.chip.fire{color:#E8590C}.chip.fire.off{filter:grayscale(1);opacity:.55}
+.goal{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 14px;margin:2px 0 14px;font-weight:600;font-size:.9rem}
+.gbar{flex:1;height:12px;border-radius:999px;background:var(--paper);border:1px solid var(--line);overflow:hidden}
+.gbar i{display:block;height:100%;background:linear-gradient(90deg,#FFB020,#E8590C);border-radius:999px;transition:width .6s}
+.jtabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.jt{border:2px solid var(--line);background:var(--card);border-radius:12px;padding:9px 4px;font-weight:700}
+.jt.on{background:var(--jc);border-color:var(--jc);color:#fff}
+.ltabs,.lvsel{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.lt{min-width:44px;border:2px solid var(--line);background:var(--card);border-radius:10px;padding:6px 10px;font-weight:700}
+.lt.on{background:var(--c);border-color:var(--c);color:#fff}
+.mbar{display:inline-flex;gap:2px;vertical-align:middle;margin-right:4px}
+.mbar i{width:12px;height:6px;border-radius:3px;background:var(--line)}
+.mbar.m1 i:nth-child(1),.mbar.m2 i:nth-child(-n+2){background:var(--c)}
+.mbar.m3 i{background:#E0A800}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:2px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.nav button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:.78rem;font-weight:600;color:var(--muted);padding:5px 0;border-radius:12px}
+.nav button span{font-size:1.35rem}
+.nav button.on{color:var(--c);background:rgba(127,127,127,.12)}
+.sheet-wrap{position:fixed;inset:0;z-index:60;background:rgba(20,24,40,.45);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{background:var(--paper);width:100%;max-width:720px;border-radius:24px 24px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow:auto;animation:up .3s cubic-bezier(.3,1.3,.5,1)}
+.sheet h2{margin-top:0}
+@keyframes fade{from{opacity:0}}@keyframes up{from{transform:translateY(40px);opacity:.4}}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.mode{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:2px;box-shadow:0 4px 0 var(--line);transition:transform .08s,box-shadow .08s}
+.mode .mi{font-size:1.8rem}.mode small{color:var(--muted)}
+.mode:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.cand{margin-top:12px;font-size:1.3rem;background:var(--hl);border-radius:12px;padding:8px 14px;display:inline-block}
+.tf{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.isian{margin-top:14px}
+.layar{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--card);border:3px solid var(--c);border-radius:14px;padding:10px;font-size:1.9rem;font-weight:700;min-height:68px}
+.layar.right{border-color:var(--good);background:var(--good-bg)}.layar.wrong{border-color:var(--bad);background:var(--bad-bg);animation:shake .4s}
+.layar .u{color:var(--muted);font-size:1.2rem}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.key{position:relative;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:11px 0;font-size:1.3rem;font-weight:700;box-shadow:0 3px 0 var(--line)}
+.key.nol{grid-column:span 2}.key.ok{grid-column:span 2;background:var(--c);border-color:var(--c);color:#fff}
+.key:active{transform:translateY(2px)}.key:disabled{opacity:.6}
+.kskor{text-align:center;font-weight:800;font-size:1.25rem;margin:12px 0 8px}
+.board{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.board .col{display:flex;flex-direction:column;gap:10px}
+.tile{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 6px;font-weight:600;font-size:1.05rem;min-height:60px;box-shadow:0 3px 0 var(--line)}
+.tile.sel{border-color:var(--c);background:var(--hl)}
+.tile.done{border-color:var(--good);background:var(--good-bg);opacity:.55;pointer-events:none;box-shadow:none}
+.tile.wrong{border-color:var(--bad);background:var(--bad-bg);animation:shake .4s}
+.emo{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:2rem;line-height:1.2;max-width:300px;margin:0 auto}
+.pair{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}.pair .emo{font-size:1.6rem;max-width:150px}
+.vs{font-weight:800;font-size:1.3rem;color:var(--muted)}
+.groups{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.grp{border:2px dashed var(--line);border-radius:12px;padding:4px 8px;font-size:1.5rem}
+.mat{display:inline-grid;grid-template-columns:repeat(2,auto);gap:6px 24px;padding:8px 18px;border-left:3px solid var(--ink);border-right:3px solid var(--ink);border-radius:8px;font-size:1.8rem;font-weight:700}
+.xpbox{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;margin:14px 0;text-align:left}
+.xpbig{font-size:2.1rem;font-weight:800;color:#E8590C;text-align:center}
+.xpbox ul{list-style:none;padding:0;margin:8px 0 0}.xpbox li{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--line)}
+.naik{background:var(--good-bg);border:2px solid var(--good);border-radius:14px;padding:10px 14px;margin:8px 0;text-align:left;font-weight:600}
+.badge-new{display:flex;align-items:center;gap:12px;background:var(--hl);border-radius:14px;padding:10px 14px;margin:8px 0;text-align:left;animation:pop .5s}
+.badge-new .bi{font-size:2rem}
+.vsbox{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.vsbox b{font-size:2.2rem;display:block}.vsbox .vs{font-size:2rem}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btnrow .mix,.btnrow .plain{margin:6px 0;text-align:center}
+.lb{background:var(--card);border:2px solid var(--line);border-radius:14px;display:flex;align-items:center;gap:12px;padding:10px 14px;margin:8px 0}
+.lb.me{border-color:var(--c);box-shadow:0 0 0 3px rgba(127,127,127,.18)}
+.lb .rk{width:30px;text-align:center;font-weight:800;font-size:1.2rem}.lb .av{font-size:1.8rem}.lb .nm{flex:1;font-weight:600;min-width:0}
+.lb .nm small{display:block;color:var(--muted);font-weight:400}.lb .xv{font-weight:800;white-space:nowrap}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:4px;margin:10px 0}
+.seg button{border:0;background:none;border-radius:9px;padding:8px;font-weight:700}.seg button.on{background:var(--c);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+.stat{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:12px;text-align:center}.stat b{display:block;font-size:1.4rem}.stat small{color:var(--muted)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
+.bdg{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;font-size:.82rem}.bdg .bi{font-size:2rem;display:block}.bdg.off{filter:grayscale(1);opacity:.45}
+.bigav{font-size:4rem;line-height:1}
+.prow{display:flex;align-items:center;gap:14px;margin:16px 0 8px}
+.lvlbar{height:12px;border-radius:999px;background:var(--card);border:2px solid var(--line);overflow:hidden;margin-top:6px}.lvlbar i{display:block;height:100%;background:var(--c)}
+.avs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:6px 0}
+.avb{font-size:1.8rem;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:6px 0}.avb.on{border-color:var(--c);background:var(--hl)}
+.lbl{display:block;font-weight:600;margin:14px 0 6px}
+.inp{width:100%;font:inherit;font-size:1.1rem;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
+.inp:focus{outline:none;border-color:var(--c)}
+textarea.inp{min-height:120px;resize:vertical;font-size:.95rem}
+.row{display:flex;gap:8px}.row .inp{flex:1;text-transform:uppercase;letter-spacing:1px}.row .go{border:0;border-radius:12px;background:var(--c);color:#fff;font-weight:700;padding:0 18px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:16px;margin:10px 0}
+.modal-img{max-width:100%;border-radius:14px;border:2px solid var(--line);display:block;margin:8px auto}
+.shake{animation:shake .4s}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:999px;font-weight:600;max-width:90vw;text-align:center;animation:fade .2s}
+@media (max-width:420px){.modes{grid-template-columns:1fr 1fr}.mode{padding:12px}.chip{padding:3px 7px}.prof{max-width:40vw}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+let rnd=Math.random;
+// ---------- utilitas ----------
+const R=(a,b)=>Math.floor(rnd()*(b-a+1))+a;
+const pick=a=>a[R(0,a.length-1)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=R(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const lcm=(a,b)=>a/gcd(a,b)*b;
+const rb=n=>n.toLocaleString('id-ID');
+const sg=n=>n<0?'−'+rb(-n):rb(n===0?0:n);
+const F=(n,d)=>`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const fmt=s=>String(s).replace(/(\d+)\/(\d+)/g,(m,a,b)=>F(a,b));
+const fr=(n,d)=>{const g=gcd(n,d);n/=g;d/=g;if(d===1)return String(n);if(n>d){const w=Math.floor(n/d);return `${w} ${n-w*d}/${d}`}return `${n}/${d}`};
+const BOX='<span class="box">?</span>';
+const rp=v=>'Rp'+rb(v);
+function digitwise(a,b,f){let r=0,m=1;while(a>0||b>0){r+=f(a%10,b%10)*m;a=Math.floor(a/10);b=Math.floor(b/10);m*=10}return r}
+function numOpts(ans,extras=[],neg=false){
+  const out=[ans];
+  const add=v=>{if(out.length<4&&Number.isInteger(v)&&!out.includes(v)&&(neg||v>=0))out.push(v)};
+  extras.forEach(add);
+  const d=shuffle([1,-1,2,-2,10,-10,5,-5,3,-3]);
+  if(Math.abs(ans)>=100)d.unshift(...shuffle([100,-100,20,-20]));
+  d.forEach(x=>add(ans+x));
+  let g=11;while(out.length<4)add(ans+g++);
+  return out.map(sg);
+}
+function strOpts(ans,extras){const out=[ans];extras.forEach(e=>{if(out.length<4&&e&&!out.includes(e))out.push(e)});return out}
+const unit=(arr,u)=>arr.map(x=>x+u);
+
+// ---------- gambar ----------
+function pie(n,k){
+  const c=60,r=54;let s='';
+  for(let i=0;i<n;i++){
+    const a1=i/n*2*Math.PI-Math.PI/2,a2=(i+1)/n*2*Math.PI-Math.PI/2;
+    const x1=c+r*Math.cos(a1),y1=c+r*Math.sin(a1),x2=c+r*Math.cos(a2),y2=c+r*Math.sin(a2);
+    s+=`<path d="M${c} ${c} L${x1.toFixed(2)} ${y1.toFixed(2)} A${r} ${r} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" fill="${i<k?'var(--shade)':'var(--card)'}" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  }
+  return `<svg viewBox="0 0 120 120" width="170" height="170" role="img" aria-label="Lingkaran dibagi ${n} bagian sama besar, ${k} bagian diarsir">${s}</svg>`;
+}
+function rectSVG(p,l){
+  const w=70+p*11,h=34+l*9,x=(300-w)/2,y=22;
+  return `<svg viewBox="0 0 300 ${h+60}" width="300" role="img" aria-label="Persegi panjang dengan panjang ${p} cm dan lebar ${l} cm">
+  <rect x="${x}" y="${y}" width="${w}" height="${h}" fill="var(--hl)" fill-opacity=".45" stroke="var(--ink)" stroke-width="2.5" rx="2"/>
+  <text x="150" y="${y+h+28}" text-anchor="middle" fill="var(--ink)" font-size="17" font-family="Fredoka,sans-serif">${p} cm</text>
+  <text x="${x+w+8}" y="${y+h/2+6}" fill="var(--ink)" font-size="17" font-family="Fredoka,sans-serif">${l} cm</text></svg>`;
+}
+function barChart(names,vals,title){
+  const L=36,B=176,T=32,u=(B-T)/10,W=320;
+  let s=`<text x="${W/2}" y="16" text-anchor="middle" font-size="14" font-weight="600" fill="var(--ink)">${title}</text>`;
+  for(let v=0;v<=10;v++){const y=B-v*u;s+=`<line x1="${L}" y1="${y}" x2="${W-6}" y2="${y}" stroke="var(--line)" stroke-width="1"/><text x="${L-8}" y="${y+4}" text-anchor="end" font-size="11" fill="var(--muted)">${v}</text>`}
+  const cols=['var(--k3)','var(--k4)','var(--k5)','var(--k6)'],slot=(W-6-L)/names.length,bw=slot*.55;
+  names.forEach((n,i)=>{const x=L+i*slot+(slot-bw)/2,h=vals[i]*u;
+    s+=`<rect class="growbar" style="animation-delay:${i*.08}s" x="${x.toFixed(1)}" y="${(B-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="4" fill="${cols[i]}"/><text x="${(x+bw/2).toFixed(1)}" y="${B+18}" text-anchor="middle" font-size="12" fill="var(--ink)">${n}</text>`});
+  s+=`<line x1="${L}" y1="${B}" x2="${W-6}" y2="${B}" stroke="var(--ink)" stroke-width="2"/><line x1="${L}" y1="${T-6}" x2="${L}" y2="${B}" stroke="var(--ink)" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 ${W} 200" width="320" role="img" aria-label="Diagram batang ${title}" style="font-family:Fredoka,sans-serif">${s}</svg>`;
+}
+function fracBars(list){
+  const W=300,h=28;let s='';
+  list.forEach(([n,d],k)=>{const y=8+k*44,x0=56,w=(W-x0-6)/d;
+    s+=`<text x="6" y="${y+20}" font-size="16" fill="var(--ink)" font-family="Fredoka,sans-serif">${n}/${d}</text>`;
+    for(let i=0;i<d;i++)s+=`<rect x="${(x0+i*w).toFixed(1)}" y="${y}" width="${w.toFixed(1)}" height="${h}" fill="${i<n?'var(--shade)':'var(--card)'}" stroke="var(--ink)" stroke-width="2"/>`});
+  return `<svg viewBox="0 0 ${W} ${list.length*44+6}" width="300" role="img" aria-label="Gambar perbandingan dua pecahan">${s}</svg>`;
+}
+
+// ---------- maskot Dokter Faiz ----------
+const MASCOT=`<svg viewBox="0 0 200 232" aria-hidden="true">
+<ellipse cx="100" cy="224" rx="46" ry="7" fill="var(--ink)" opacity=".12"/>
+<g class="fz-all">
+  <g class="arm-l"><rect x="52" y="148" width="18" height="46" rx="9" fill="#fff" stroke="#1F2A5A" stroke-width="3"/><circle cx="61" cy="198" r="9" fill="#F4C59B" stroke="#1F2A5A" stroke-width="3"/></g>
+  <g class="arm-r"><rect x="130" y="148" width="18" height="46" rx="9" fill="#fff" stroke="#1F2A5A" stroke-width="3"/><circle cx="139" cy="198" r="9" fill="#F4C59B" stroke="#1F2A5A" stroke-width="3"/></g>
+  <rect x="91" y="126" width="18" height="18" fill="#F4C59B" stroke="#1F2A5A" stroke-width="3"/>
+  <path d="M56 152 Q100 134 144 152 L150 214 Q100 222 50 214 Z" fill="#fff" stroke="#1F2A5A" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M86 141 L100 174 L114 141 Z" fill="#7FC8F8" stroke="#1F2A5A" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M84 142 L100 178 L95 214 M116 142 L100 178" fill="none" stroke="#1F2A5A" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M82 145 Q72 176 90 188" fill="none" stroke="#3B4A6B" stroke-width="4" stroke-linecap="round"/>
+  <path d="M118 145 Q126 168 113 180" fill="none" stroke="#3B4A6B" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="111" cy="186" r="7" fill="#C9D3E0" stroke="#1F2A5A" stroke-width="2.5"/>
+  <rect x="118" y="188" width="26" height="13" rx="3" fill="#2A7FCC"/>
+  <text x="131" y="198" text-anchor="middle" font-size="8" font-weight="700" fill="#fff" font-family="Fredoka,sans-serif">FAIZ</text>
+  <circle cx="51" cy="90" r="10" fill="#F4C59B" stroke="#1F2A5A" stroke-width="3"/>
+  <circle cx="149" cy="90" r="10" fill="#F4C59B" stroke="#1F2A5A" stroke-width="3"/>
+  <circle cx="100" cy="84" r="50" fill="#F4C59B" stroke="#1F2A5A" stroke-width="3"/>
+  <path d="M51 80 Q48 34 100 32 Q152 34 149 80 Q140 58 118 56 Q100 68 78 55 Q58 60 51 80 Z" fill="#2B2320" stroke="#1F2A5A" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M55 62 Q100 38 145 62" fill="none" stroke="#6B7A90" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="100" cy="45" r="13" fill="#DDE6EE" stroke="#1F2A5A" stroke-width="3"/>
+  <circle cx="100" cy="45" r="5" fill="#fff"/>
+  <path d="M74 76 Q82 71 90 76 M110 76 Q118 71 126 76" fill="none" stroke="#2B2320" stroke-width="3.5" stroke-linecap="round"/>
+  <g class="eyes"><ellipse cx="82" cy="90" rx="7" ry="9" fill="#1F2A5A"/><ellipse cx="118" cy="90" rx="7" ry="9" fill="#1F2A5A"/><circle cx="84.5" cy="86" r="2.6" fill="#fff"/><circle cx="120.5" cy="86" r="2.6" fill="#fff"/></g>
+  <ellipse cx="71" cy="106" rx="8" ry="5" fill="#F28B9B" opacity=".6"/><ellipse cx="129" cy="106" rx="8" ry="5" fill="#F28B9B" opacity=".6"/>
+  <g class="m m-idle"><path d="M88 110 Q100 122 112 110" fill="none" stroke="#1F2A5A" stroke-width="3.5" stroke-linecap="round"/></g>
+  <g class="m m-happy"><path d="M84 106 Q100 134 116 106 Z" fill="#8A2E3B" stroke="#1F2A5A" stroke-width="3" stroke-linejoin="round"/><path d="M92 120 Q100 114 108 120 Q100 128 92 120 Z" fill="#F07A8A"/></g>
+  <g class="m m-sad"><path d="M90 118 Q100 110 110 118" fill="none" stroke="#1F2A5A" stroke-width="3.5" stroke-linecap="round"/></g>
+</g></svg>`;
+const fzHTML=(cls='')=>`<div class="fz ${cls}" id="fz">${MASCOT}</div>`;
+function setMood(m){const el=document.getElementById('fz');if(!el)return;el.classList.remove('mood-happy','mood-sad','waving');void el.getBoundingClientRect();if(m)el.classList.add('mood-'+m)}
+function say(t,delay=.5){const b=document.getElementById('say');if(!b)return;b.innerHTML=t;b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');SFX.babble(b.textContent,delay)}
+function confetti(n){
+  if(AMAN||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const box=document.createElement('div');box.className='confetti';
+  const cols=['#FFB020','#3BA7F5','#8B5CF6','#14B8A6','#F2547D','#5BD593'];
+  for(let i=0;i<n;i++){const s=document.createElement('i');s.style.left=R(3,97)+'%';s.style.background=pick(cols);
+    s.style.setProperty('--dx',R(-90,90)+'px');s.style.setProperty('--r',R(200,800)+'deg');
+    s.style.animationDelay=(Math.random()*.3)+'s';s.style.animationDuration=(1.3+Math.random()*1)+'s';box.appendChild(s)}
+  document.body.appendChild(box);setTimeout(()=>box.remove(),2800);
+}
+// Mode aman (dipakai aplikasi Android jika sebelumnya tertutup mendadak): tanpa suara dan confetti
+const AMAN=/[?&]aman=1/.test(location.search);
+if(AMAN){try{const st=document.createElement('style');st.textContent='*,*::before,*::after{animation:none!important;transition:none!important}body{background-image:none!important}';document.head.appendChild(st)}catch(e){}}
+// ---------- suara lucu (dibuat langsung oleh browser, tanpa file) ----------
+const SFX=(()=>{
+  let ctx=null;
+  const on=()=>!data.mute;
+  function ac(){
+    if(AMAN)return null;
+    if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{ctx=new C()}catch(e){return null}}
+    if(ctx.state==='suspended')ctx.resume();
+    return ctx;
+  }
+  function tone(f,start,dur,o={}){
+    const c=ac();if(!c)return;
+    const {type='sine',vol=.16,slide=0,attack=.012}=o,t=c.currentTime+start;
+    const osc=c.createOscillator(),g=c.createGain();
+    osc.type=type;osc.frequency.setValueAtTime(f,t);
+    if(slide)osc.frequency.exponentialRampToValueAtTime(Math.max(40,f*slide),t+dur);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+attack);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    osc.connect(g);g.connect(c.destination);osc.start(t);osc.stop(t+dur+.03);
+  }
+  const notes=(arr,step,o,at=0)=>arr.forEach((f,i)=>tone(f,at+i*step,o.dur||.18,o));
+  return{
+    tap(){if(on())tone(560,0,.07,{type:'triangle',vol:.1,slide:1.7})},
+    right(){if(!on())return;notes([523,659,784,1047],.07,{type:'triangle',vol:.15,dur:.2});tone(1568,.3,.3,{vol:.05})},
+    streak(){if(!on())return;notes([523,659,784,1047,1319,1568],.06,{type:'square',vol:.055,dur:.16});notes([1047,1568,2093],.1,{type:'triangle',vol:.1,dur:.3},.36)},
+    wrong(){if(!on())return;tone(392,0,.2,{type:'triangle',vol:.15,slide:.75});tone(294,.18,.35,{type:'triangle',vol:.13,slide:.6})},
+    giggle(){if(!on())return;[0,1,2,3,4].forEach(i=>tone(700+i*90,i*.07,.07,{type:'square',vol:.04,slide:1.4}))},
+    star(i){if(on())tone(784*Math.pow(1.26,i),0,.28,{type:'sine',vol:.16,slide:1.5})},
+    finish(st){if(!on())return;
+      if(st>=2)notes([523,659,784,659,784,1047],.12,{type:'triangle',vol:.14,dur:.22});
+      else if(st===1)notes([523,587,659,784],.14,{type:'triangle',vol:.12,dur:.22});
+      else notes([392,349,330,392],.18,{type:'triangle',vol:.11,dur:.25})},
+    // ocehan Dokter Faiz saat balon percakapan muncul
+    babble(text,delay=0){if(!ctx||!on())return;const w=String(text).trim().split(/\s+/).length,n=Math.min(12,Math.max(3,Math.round(w*1.3)));
+      for(let i=0;i<n;i++)tone(R(330,560),delay+i*.075,.06,{type:'square',vol:.03,slide:pick([.85,1.2,1.05])})}
+  };
+})();
+const HELLO=['Halo! Aku <b>Dokter Faiz</b>. Mau latihan apa hari ini?','Halo lagi! <b>Dokter Faiz</b> siap menemani latihanmu.','Resep Dokter Faiz: latihan 10 menit setiap hari biar otak makin kuat!'];
+const ASK=['Kamu pasti bisa!','Baca soalnya pelan-pelan, ya.','Ayo, pikirkan baik-baik!','Dokter Faiz percaya kamu bisa!','Tarik napas, lalu hitung.','Coba bayangkan soalnya dulu.'];
+const PRAISE=['Hebat! 🎉','Pintar sekali! 🌟','Mantap! 💪','Benar! Kamu keren! 🚀','Luar biasa! 🏆','Tepat sekali! ✨'];
+const OOPS=['Tidak apa-apa, salah itu bagian dari belajar!','Hampir! Yuk lihat caranya bersama.','Otak jadi kuat karena latihan. Ayo lanjut!','Pelan-pelan saja, Dokter Faiz bantu jelaskan.'];
+// ===== Gambar tambahan =====
+const sup=n=>`<sup>${n}</sup>`;
+const EMO=['🍎','🍌','🍓','🐟','⭐','🎈','🐥','🍪','🌸','🚗'];
+function emo(e,n){let s='';for(let i=0;i<n;i++)s+=`<span>${e}</span>`;return `<div class="emo">${s}</div>`}
+const SHAPES={'Lingkaran':'<circle cx="60" cy="60" r="46"/>','Segitiga':'<path d="M60 12 L108 104 L12 104 Z"/>','Persegi':'<rect x="16" y="16" width="88" height="88" rx="4"/>','Persegi panjang':'<rect x="6" y="30" width="108" height="60" rx="4"/>','Bintang':'<path d="M60 8 L73 45 L112 45 L80 68 L92 106 L60 83 L28 106 L40 68 L8 45 L47 45 Z"/>','Hati':'<path d="M60 104 C20 76 6 52 18 32 C30 12 54 18 60 36 C66 18 90 12 102 32 C114 52 100 76 60 104 Z"/>'};
+function shapeSVG(n,col){return `<svg viewBox="0 0 120 120" width="150" height="150" role="img" aria-label="Sebuah bentuk"><g fill="${col}" stroke="var(--ink)" stroke-width="4" stroke-linejoin="round">${SHAPES[n]}</g></svg>`}
+function clockSVG(h,m){const rad=d=>d*Math.PI/180,ha=((h%12)+m/60)*30-90,ma=m*6-90;let t='';for(let i=1;i<=12;i++){const a=rad(i*30-90);t+=`<text x="${(60+42*Math.cos(a)).toFixed(1)}" y="${(60+42*Math.sin(a)+5).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">${i}</text>`}
+  return `<svg viewBox="0 0 120 120" width="170" height="170" role="img" aria-label="Jam dinding"><circle cx="60" cy="60" r="56" fill="var(--card)" stroke="var(--ink)" stroke-width="4"/>${t}<line x1="60" y1="60" x2="${(60+26*Math.cos(rad(ha))).toFixed(1)}" y2="${(60+26*Math.sin(rad(ha))).toFixed(1)}" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/><line x1="60" y1="60" x2="${(60+40*Math.cos(rad(ma))).toFixed(1)}" y2="${(60+40*Math.sin(rad(ma))).toFixed(1)}" stroke="var(--shade)" stroke-width="3.5" stroke-linecap="round"/><circle cx="60" cy="60" r="4" fill="var(--ink)"/></svg>`}
+const jam=(h,m)=>`Pukul ${h}.${String(m).padStart(2,'0')}`;
+function triSVG(a,b,c){return `<svg viewBox="0 0 200 140" width="220" role="img" aria-label="Segitiga siku-siku" style="font-family:inherit"><path d="M30 120 L170 120 L30 20 Z" fill="var(--hl)" fill-opacity=".45" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/><rect x="30" y="106" width="14" height="14" fill="none" stroke="var(--ink)" stroke-width="2"/><text x="16" y="76" font-size="15" fill="var(--ink)" text-anchor="middle">${a}</text><text x="100" y="138" font-size="15" fill="var(--ink)" text-anchor="middle">${b}</text><text x="108" y="62" font-size="15" fill="var(--ink)">${c}</text></svg>`}
+function matHTML(m){return `<div class="mat">${m.map(r=>r.map(v=>`<span>${sg(v)}</span>`).join('')).join('')}</div>`}
+const lin=(a,b,v='x')=>`${a===1?'':a===-1?'−':sg(a)}${v}${b===0?'':b<0?' − '+(-b):' + '+b}`;
+const pm=b=>b<0?`− ${-b}`:`+ ${b}`;
+const par=v=>v<0?`(${sg(v)})`:sg(v);
+
+// ===== TK =====
+const T_LOW=[
+{id:'tk_hitung',g:0,name:'Berhitung benda',icon:'🍎',label:'Ada berapa?',gen(){const e=pick(EMO),n=R(1,10);
+  return{q:'',visual:emo(e,n),opts:numOpts(n,[n+1,n-1,n+2]),expl:`Hitung satu per satu sambil menunjuk: ${Array.from({length:n},(_,i)=>i+1).join(', ')}. Jadi ada ${n}.`}}},
+{id:'tk_banding',g:0,name:'Lebih banyak',icon:'⚖️',label:'Mana yang lebih banyak?',gen(){const [e1,e2]=shuffle(EMO.slice()).slice(0,2),a=R(1,9);let b=R(1,9);if(rnd()<.15)b=a;
+  const ans=a>b?e1:a<b?e2:'Sama banyak';
+  return{q:'',visual:`<div class="pair"><div>${emo(e1,a)}</div><div class="vs">atau</div><div>${emo(e2,b)}</div></div>`,opts:strOpts(ans,[e1,e2,'Sama banyak'].filter(x=>x!==ans)),
+  expl:a===b?`Keduanya ada ${a}. Jadi sama banyak.`:`${e1} ada ${a} dan ${e2} ada ${b}. ${Math.max(a,b)} lebih banyak dari ${Math.min(a,b)}, jadi ${ans} lebih banyak.`}}},
+{id:'tk_tambah',g:0,name:'Tambah bergambar',icon:'➕',label:'Kalau digabung, jadi berapa?',gen(){const e=pick(EMO),a=R(1,5),b=R(1,5),n=a+b;
+  return{q:'',visual:`<div class="pair"><div>${emo(e,a)}</div><div class="vs">+</div><div>${emo(e,b)}</div></div>`,opts:numOpts(n,[n+1,n-1,a]),expl:`${a} ditambah ${b}. Hitung semuanya: ada ${n}. Jadi ${a} + ${b} = ${n}.`}}},
+{id:'tk_urut',g:0,name:'Angka sebelum dan sesudah',icon:'🔢',gen(){const n=R(2,19),after=rnd()<.6,ans=after?n+1:n-1;
+  return{q:`${after?'Sesudah':'Sebelum'} ${n} adalah ?`,opts:numOpts(ans,[after?n-1:n+1,n,ans+2]),expl:`Urutan angkanya: ${n-1}, ${n}, ${n+1}. Jadi angka ${after?'sesudah':'sebelum'} ${n} adalah ${ans}.`}}},
+{id:'tk_bentuk',g:0,name:'Mengenal bentuk',icon:'🔷',label:'Bentuk apa ini?',gen(){const ks=Object.keys(SHAPES),n=pick(ks),col=pick(['#FFB020','#3BA7F5','#8B5CF6','#14B8A6','#F2547D']);
+  const d={'Lingkaran':'bulat dan tidak punya sudut','Segitiga':'punya 3 sisi dan 3 sudut','Persegi':'punya 4 sisi yang sama panjang','Persegi panjang':'punya 4 sisi, dua panjang dan dua pendek','Bintang':'punya 5 ujung lancip','Hati':'seperti simbol sayang'};
+  return{q:'',visual:shapeSVG(n,col),opts:strOpts(n,shuffle(ks.filter(x=>x!==n))),expl:`Ini ${n.toLowerCase()}, bentuknya ${d[n]}.`}}},
+{id:'tk_pola',g:0,name:'Pola',icon:'🔴',label:'Apa yang berikutnya?',gen(){const pool=['🔴','🔵','🟡','🟢','⭐','🌙','🍎','🍌'],[a,b,c]=shuffle(pool.slice()).slice(0,3),pat=rnd()<.5?[a,b]:[a,b,c],len=pat.length===2?5:6;
+  const seq=Array.from({length:len},(_,i)=>pat[i%pat.length]),ans=pat[len%pat.length];
+  return{q:'',visual:`<div class="emo">${seq.map(x=>`<span>${x}</span>`).join('')}<span class="box">?</span></div>`,opts:strOpts(ans,shuffle([a,b,c,pick(pool)]).filter(x=>x!==ans)),expl:`Polanya berulang: ${pat.join(' ')}, lalu ${pat.join(' ')} lagi. Jadi berikutnya ${ans}.`}}},
+
+// ===== Kelas 1 =====
+{id:'k1_tambah',g:1,name:'Penjumlahan sampai 20',icon:'➕',gen(){const a=R(2,12),b=R(1,Math.min(9,20-a)),n=a+b;
+  return{q:`${a} + ${b} = ?`,opts:numOpts(n,[n+1,n-1,n+2]),expl:`Mulai dari ${a}, lalu hitung maju ${b} langkah: ${Array.from({length:b},(_,i)=>a+i+1).join(', ')}. Jadi ${a} + ${b} = ${n}.`}}},
+{id:'k1_kurang',g:1,name:'Pengurangan sampai 20',icon:'➖',gen(){const a=R(5,20),b=R(1,Math.min(9,a-1)),n=a-b;
+  return{q:`${a} − ${b} = ?`,opts:numOpts(n,[n+1,n-1,a+b]),expl:`Mulai dari ${a}, lalu hitung mundur ${b} langkah sampai ${n}. Cek: ${n} + ${b} = ${a}.`}}},
+{id:'k1_puluhan',g:1,name:'Puluhan dan satuan',icon:'🧱',gen(){const p=R(1,9),s=R(0,9),n=p*10+s;
+  if(rnd()<.5)return{q:`${p} puluhan dan ${s} satuan = ?`,opts:numOpts(n,[s*10+p,p+s,n+10]),expl:`${p} puluhan = ${p*10}, ditambah ${s} satuan menjadi ${p*10} + ${s} = ${n}.`};
+  return{q:`Angka puluhan pada ${n} adalah ?`,opts:numOpts(p,[s,p+1,n]),expl:`${n} terdiri dari ${p} puluhan dan ${s} satuan. Jadi angka puluhannya ${p}.`}}},
+{id:'k1_banding',g:1,name:'Membandingkan bilangan',icon:'🐊',label:'Tanda yang tepat adalah?',gen(){const a=R(10,99),b=rnd()<.15?a:R(10,99),ans=a>b?'>':a<b?'<':'=';
+  return{q:`${a} ${BOX} ${b}`,opts:[ans,...['>','<','='].filter(x=>x!==ans)],expl:a===b?'Kedua bilangan sama, jadi tandanya =.':`${Math.max(a,b)} lebih besar dari ${Math.min(a,b)}. Mulut buaya selalu terbuka ke bilangan yang lebih besar, jadi tandanya ${ans}.`}}},
+{id:'k1_jam',g:1,name:'Membaca jam',icon:'🕒',label:'Jam berapa ini?',gen(){const h=R(1,12);
+  return{q:'',visual:clockSVG(h,0),opts:strOpts(jam(h,0),[jam(h%12+1,0),jam((h+10)%12+1,0),jam((h+5)%12+1,0),jam((h+3)%12+1,0)]),expl:`Jarum panjang (oranye) menunjuk angka 12, artinya tepat. Jarum pendek menunjuk angka ${h}. Jadi ${jam(h,0)}.`}}},
+{id:'k1_tambah2',g:1,name:'Tambah dan kurang sampai 100',icon:'💯',gen(){
+  if(rnd()<.5){const p=R(1,8),s=R(0,8),a=p*10+s,b=R(1,9-s),n=a+b;return{q:`${a} + ${b} = ?`,opts:numOpts(n,[n+10,n-1,p+b]),expl:`Tambahkan satuannya saja: ${s} + ${b} = ${s+b}. Puluhannya tetap ${p}. Jadi ${n}.`}}
+  const p=R(1,9),s=R(1,9),a=p*10+s,b=R(1,s),n=a-b;return{q:`${a} − ${b} = ?`,opts:numOpts(n,[n-10,n+1,a+b]),expl:`Kurangkan satuannya saja: ${s} − ${b} = ${s-b}. Puluhannya tetap ${p}. Jadi ${n}.`}}},
+
+// ===== Kelas 2 =====
+{id:'k2_kali',g:2,name:'Perkalian sebagai tambah berulang',icon:'🍪',gen(){const a=R(2,5),b=R(2,5),e=pick(EMO);
+  return{q:`${a} × ${b} = ?`,visual:`<div class="groups">${Array.from({length:a},()=>`<div class="grp">${e.repeat(b)}</div>`).join('')}</div>`,opts:numOpts(a*b,[a+b,a*b+b,a*b-1]),
+  expl:`Ada ${a} kelompok, masing-masing berisi ${b}. ${Array(a).fill(b).join(' + ')} = ${a*b}. Jadi ${a} × ${b} = ${a*b}.`}}},
+{id:'k2_tambah',g:2,name:'Tambah dan kurang dengan simpan',icon:'🧮',gen(){
+  if(rnd()<.5){const a=R(15,79),b=R(6,99-a),n=a+b,su=a%10+b%10;return{q:`${a} + ${b} = ?`,opts:numOpts(n,[digitwise(a,b,(x,y)=>(x+y)%10),n+10,n-1]),
+    expl:`Jumlahkan satuan: ${a%10} + ${b%10} = ${su}${su>9?`, tulis ${su%10} dan simpan 1`:''}. Lalu puluhan: ${Math.floor(a/10)} + ${Math.floor(b/10)}${su>9?' + 1':''} = ${Math.floor(n/10)}. Hasilnya ${n}.`}}
+  const a=R(30,99),b=R(11,a-5),n=a-b,pin=a%10<b%10;return{q:`${a} − ${b} = ?`,opts:numOpts(n,[digitwise(a,b,(x,y)=>Math.abs(x-y)),n+10,n+1]),
+    expl:pin?`Satuan ${a%10} lebih kecil dari ${b%10}, jadi pinjam 1 puluhan: ${a%10+10} − ${b%10} = ${a%10+10-b%10}. Puluhan tinggal ${Math.floor(a/10)-1}, lalu ${Math.floor(a/10)-1} − ${Math.floor(b/10)} = ${Math.floor(a/10)-1-Math.floor(b/10)}. Hasilnya ${n}.`:`Satuan: ${a%10} − ${b%10} = ${a%10-b%10}. Puluhan: ${Math.floor(a/10)} − ${Math.floor(b/10)} = ${Math.floor(a/10)-Math.floor(b/10)}. Hasilnya ${n}.`}}},
+{id:'k2_uang',g:2,name:'Mengenal uang',icon:'💵',gen(){
+  if(rnd()<.6){const items=Array.from({length:R(2,3)},()=>pick([500,1000,2000,5000,10000])),n=items.reduce((s,x)=>s+x,0);
+    return{q:`${items.map(rp).join(' + ')} = ?`,opts:numOpts(n,[n+500,n-500,n+1000]).map(v=>'Rp'+v),expl:`Jumlahkan satu per satu: ${items.map(rp).join(' + ')} = ${rp(n)}.`}}
+  const h=pick([1500,2500,3000,3500,4000,6000,7500]),b=h<5000?5000:10000;
+  return{q:`Ibu membeli roti seharga ${rp(h)} dan membayar dengan ${rp(b)}. Berapa kembaliannya?`,opts:numOpts(b-h,[h,b-h+500,b-h-500]).map(v=>'Rp'+v),expl:`Kembalian = uang yang dibayar − harga = ${rp(b)} − ${rp(h)} = ${rp(b-h)}.`}}},
+{id:'k2_jam',g:2,name:'Jam, setengah, dan seperempat',icon:'⏰',label:'Jam berapa ini?',gen(){const h=R(1,12),m=pick([0,15,30,45]);
+  const d=m===0?'menunjuk angka 12, artinya tepat':m===30?'menunjuk angka 6, artinya lewat 30 menit (setengah jam)':m===15?'menunjuk angka 3, artinya lewat 15 menit':'menunjuk angka 9, artinya lewat 45 menit';
+  return{q:'',visual:clockSVG(h,m),opts:strOpts(jam(h,m),[jam(h%12+1,m),jam(h,(m+30)%60),jam(h,(m+15)%60),jam((h+10)%12+1,m)]),expl:`Jarum panjang ${d}. Jarum pendek ${m===0?'menunjuk':'sudah melewati'} angka ${h}. Jadi ${jam(h,m)}.`}}},
+{id:'k2_pecahan',g:2,name:'Setengah dan seperempat',icon:'🍕',label:'Berapa bagian yang diarsir?',gen(){const n=pick([2,3,4]),k=R(1,n-1),ans=`${k}/${n}`;
+  return{q:'',visual:pie(n,k),opts:strOpts(ans,[`${n-k}/${n}`,`${k}/${n+1}`,`${k+1}/${n+1}`,`1/${n+2}`]),expl:`Pizza dibagi ${n} bagian sama besar, yang diarsir ${k}. Jadi ${ans}.${n===2?' Satu dari dua bagian disebut setengah.':n===4&&k===1?' Satu dari empat bagian disebut seperempat.':''}`}}},
+{id:'k2_genap',g:2,name:'Genap dan ganjil',icon:'🧦',gen(){const want=rnd()<.5,isG=n=>n%2===0;let ans;do{ans=R(10,99)}while(isG(ans)!==want);const wr=new Set();while(wr.size<3){const v=R(10,99);if(isG(v)!==want)wr.add(v)}
+  return{q:`Manakah bilangan ${want?'genap':'ganjil'}?`,opts:[String(ans),...[...wr].map(String)],expl:`Lihat angka satuannya. Bilangan genap berakhiran 0, 2, 4, 6, 8. Bilangan ganjil berakhiran 1, 3, 5, 7, 9. ${ans} berakhiran ${ans%10}, jadi ${want?'genap':'ganjil'}.`}}},
+{id:'k2_panjang',g:2,name:'Soal cerita panjang benda',icon:'📏',gen(){const a=R(8,30),b=R(3,a-2),it=pick([['pita merah','pita biru'],['pensil','penghapus'],['tali','benang']]);
+  if(rnd()<.5)return{q:`Panjang ${it[0]} ${a} cm dan ${it[1]} ${b} cm. Berapa selisih panjangnya?`,opts:unit(numOpts(a-b,[a+b,a-b+1,a-b-1]),' cm'),expl:`Selisih berarti dikurangi: ${a} − ${b} = ${a-b} cm.`};
+  return{q:`Panjang ${it[0]} ${a} cm dan ${it[1]} ${b} cm. Jika disambung, berapa panjangnya?`,opts:unit(numOpts(a+b,[a-b,a+b+1,a+b-10]),' cm'),expl:`Disambung berarti dijumlahkan: ${a} + ${b} = ${a+b} cm.`}}},
+];
+
+const T_OLD=[
+// ===== Kelas 3 =====
+{id:'kali',g:3,name:'Perkalian 1 sampai 10',icon:'✖️',gen(){
+  const a=R(2,10),b=R(2,10),ans=a*b;
+  return{q:`${a} × ${b} = ?`,opts:numOpts(ans,[a*(b+1),a*(b-1),(a+1)*b]),
+  expl:a<=5?`${a} × ${b} artinya ${b} dijumlahkan sebanyak ${a} kali: ${Array(a).fill(b).join(' + ')} = ${ans}.`
+  :`${a} × ${b} = ${ans}. Kalau lupa, mulai dari yang kamu ingat: ${a-1} × ${b} = ${(a-1)*b}, lalu tambah ${b} lagi menjadi ${ans}.`}}},
+{id:'bagi',g:3,name:'Pembagian',icon:'➗',gen(){
+  const b=R(2,10),c=R(2,10),a=b*c;
+  return{q:`${a} : ${b} = ?`,opts:numOpts(c,[c+1,c-1,b]),
+  expl:`Cari bilangan yang jika dikali ${b} hasilnya ${a}. Karena ${b} × ${c} = ${a}, maka ${a} : ${b} = ${c}.`}}},
+{id:'tambah',g:3,name:'Tambah dan kurang sampai 1.000',icon:'➕',gen(){
+  if(rnd()<.5){const a=R(100,800),b=R(15,999-a),ans=a+b;
+    return{q:`${rb(a)} + ${rb(b)} = ?`,opts:numOpts(ans,[digitwise(a,b,(x,y)=>(x+y)%10),ans+10,ans-10]),
+    expl:`Susun ke bawah, lalu jumlahkan mulai dari satuan, puluhan, kemudian ratusan. Kalau hasil satu kolom lebih dari 9, simpan 1 ke kolom sebelah kiri. Hasilnya ${rb(ans)}.`}}
+  const a=R(200,999),b=R(15,a-50),ans=a-b;
+  return{q:`${rb(a)} − ${rb(b)} = ?`,opts:numOpts(ans,[digitwise(a,b,(x,y)=>Math.abs(x-y)),ans+10,ans-10]),
+  expl:`Kurangkan mulai dari satuan. Kalau angka atas lebih kecil dari angka bawah, pinjam 1 dari kolom sebelah kiri. Hasilnya ${rb(ans)}. Cek: ${rb(ans)} + ${rb(b)} = ${rb(a)}.`}}},
+{id:'pecahan',g:3,name:'Mengenal pecahan',icon:'🍕',label:'Berapa bagian yang diarsir?',gen(){
+  const n=R(2,8),k=R(1,n-1),ans=`${k}/${n}`;
+  return{q:'',visual:pie(n,k),opts:strOpts(ans,[`${n-k}/${n}`,`${n}/${k}`,`${k}/${n+1}`,`${k+1}/${n}`,`${k}/${n+2}`]),
+  expl:`Lingkaran dibagi menjadi ${n} bagian sama besar (penyebut), dan yang diarsir ada ${k} bagian (pembilang). Jadi ${k}/${n}.`}}},
+{id:'nilaitempat',g:3,name:'Nilai tempat sampai 10.000',icon:'🏠',isNew:1,gen(){
+  let n,ds,p;
+  do{n=R(1000,9999);ds=String(n).split('').map(Number);p=R(0,3)}while(ds[p]===0||ds.filter(x=>x===ds[p]).length>1);
+  const d=ds[p],names=['ribuan','ratusan','puluhan','satuan'],val=d*10**(3-p);
+  const urai=ds.map((x,i)=>x*10**(3-i)).filter(x=>x>0).map(rb).join(' + ');
+  const expl=`Uraikan dulu: ${rb(n)} = ${urai}. Angka ${d} ada di tempat ${names[p]}, jadi nilainya ${rb(val)}.`;
+  if(rnd()<.5)return{q:`Angka ${d} pada bilangan ${rb(n)} menempati nilai tempat apa?`,opts:strOpts(names[p],shuffle(names.filter(x=>x!==names[p]))),expl};
+  return{q:`Berapa nilai angka ${d} pada bilangan ${rb(n)}?`,opts:numOpts(val,[d,d*10**(4-p),p<3?d*10**(2-p):d*10]),expl}}},
+{id:'hilang',g:3,name:'Angka yang hilang',icon:'🔍',isNew:1,label:'Berapa angka di dalam kotak?',gen(){
+  const f=R(0,2);
+  if(f===0){const a=R(10,60),b=R(5,39),c=a+b;return{q:`${a} + ${BOX} = ${c}`,opts:numOpts(b,[c+a,b+10,b-1]),expl:`Berapa yang harus ditambahkan ke ${a} supaya menjadi ${c}? Hitung ${c} − ${a} = ${b}. Cek: ${a} + ${b} = ${c}.`}}
+  if(f===1){const a=R(10,60),b=R(5,39),c=a+b;return{q:`${BOX} + ${b} = ${c}`,opts:numOpts(a,[c+b,a+10,a+1]),expl:`Angka yang hilang = ${c} − ${b} = ${a}. Cek: ${a} + ${b} = ${c}.`}}
+  const c=R(40,99),b=R(5,c-10),d=c-b;
+  return{q:`${c} − ${BOX} = ${d}`,opts:numOpts(b,[c+d,b+10,b-1]),expl:`Dari ${c} dikurangi berapa supaya tinggal ${d}? Hitung ${c} − ${d} = ${b}. Cek: ${c} − ${b} = ${d}.`}}},
+{id:'pola',g:3,name:'Pola bilangan',icon:'🐾',isNew:1,label:'Bilangan berikutnya adalah?',gen(){
+  const d=pick([2,3,4,5,10,25]),up=rnd()<.6,s=up?R(1,30):R(d*5+5,d*5+60);
+  const t=[0,1,2,3,4].map(i=>up?s+i*d:s-i*d),ans=t[4];
+  return{q:`${t.slice(0,4).join(', ')}, ?`,opts:numOpts(ans,[up?ans+d:ans-d,up?ans-1:ans+1,up?t[3]+1:t[3]-1]),
+  expl:`Perhatikan selisihnya: setiap langkah ${up?'bertambah':'berkurang'} ${d}. Jadi ${t[3]} ${up?'+':'−'} ${d} = ${ans}.`}}},
+{id:'diagram',g:3,name:'Membaca diagram batang',icon:'📊',isNew:1,gen(){
+  const sets=[['Apel','Jeruk','Mangga','Pisang'],['Bola','Lari','Renang','Catur'],['Merah','Biru','Hijau','Kuning']];
+  const titles=['Buah kesukaan siswa','Olahraga kesukaan siswa','Warna kesukaan siswa'];
+  const k=R(0,2),names=sets[k],vals=shuffle([2,3,4,5,6,7,8,9]).slice(0,4),vis=barChart(names,vals,titles[k]),f=R(0,2);
+  if(f===0){const i=R(0,3);return{q:`Berapa siswa yang memilih ${names[i]}?`,visual:vis,opts:numOpts(vals[i],[vals[i]+1,vals[i]-1,vals[(i+1)%4]]),expl:`Lihat ujung batang ${names[i]}, lalu tarik garis lurus ke angka di sebelah kiri. Ujung batangnya sejajar dengan angka ${vals[i]}.`}}
+  if(f===1){const mx=Math.max(...vals),i=vals.indexOf(mx);return{q:'Mana yang paling banyak dipilih?',visual:vis,opts:strOpts(names[i],names.filter(x=>x!==names[i])),expl:`Batang yang paling tinggi adalah ${names[i]}, yaitu ${mx} siswa.`}}
+  let i=R(0,3),j=R(0,3);while(j===i)j=R(0,3);if(vals[i]<vals[j])[i,j]=[j,i];const ans=vals[i]-vals[j];
+  return{q:`Berapa selisih siswa yang memilih ${names[i]} dan ${names[j]}?`,visual:vis,opts:numOpts(ans,[vals[i]+vals[j],ans+1,ans+2]),expl:`${names[i]} dipilih ${vals[i]} siswa dan ${names[j]} dipilih ${vals[j]} siswa. Selisihnya ${vals[i]} − ${vals[j]} = ${ans}.`}}},
+
+// ===== Kelas 4 =====
+{id:'kalibs',g:4,name:'Perkalian bersusun',icon:'🧱',gen(){
+  const t=R(1,9),o=R(1,9),a=t*10+o,b=R(3,9),ans=a*b;
+  return{q:`${a} × ${b} = ?`,opts:numOpts(ans,[t*b*10+(o*b)%10,ans+b,ans-b]),
+  expl:`Pecah ${a} menjadi ${t*10} + ${o}. Lalu ${t*10} × ${b} = ${t*10*b} dan ${o} × ${b} = ${o*b}. Jumlahkan: ${t*10*b} + ${o*b} = ${ans}.`}}},
+{id:'senilai',g:4,name:'Pecahan senilai',icon:'🟰',label:'Lengkapi pecahan senilai ini.',gen(){
+  const b=R(2,6),a=R(1,b-1),k=R(2,5),ans=a*k;
+  return{q:`${F(a,b)} = ${F('?',b*k)}`,opts:numOpts(ans,[a+b*k-b,ans+1,ans-1]),
+  expl:`Penyebut ${b} menjadi ${b*k}, artinya dikali ${k}. Pembilang juga harus dikali ${k}: ${a} × ${k} = ${ans}. Jadi ${a}/${b} = ${ans}/${b*k}.`}}},
+{id:'kelluas',g:4,name:'Keliling dan luas',icon:'📐',gen(){
+  const p=R(4,15),l=R(2,p-1),kel=2*(p+l),luas=p*l,isL=rnd()<.5,ans=isL?luas:kel;
+  return{q:`Berapa ${isL?'luas':'keliling'} persegi panjang ini?`,visual:rectSVG(p,l),
+  opts:unit(numOpts(ans,[isL?kel:luas,p+l,ans+p]),isL?' cm²':' cm'),
+  expl:isL?`Luas = panjang × lebar = ${p} × ${l} = ${luas} cm².`:`Keliling = jumlah semua sisi = 2 × (panjang + lebar) = 2 × (${p} + ${l}) = ${kel} cm.`}}},
+{id:'bulatkan',g:4,name:'Pembulatan',icon:'🎯',gen(){
+  const ke=rnd()<.5?10:100;let n=ke===10?R(101,999):R(1001,9999);if(n%ke===0)n+=3;
+  const ans=Math.round(n/ke)*ke,lo=Math.floor(n/ke)*ke,hi=lo+ke,d=ke===10?n%10:Math.floor(n%100/10);
+  return{q:`Bulatkan ${rb(n)} ke ${ke===10?'puluhan':'ratusan'} terdekat.`,opts:numOpts(ans,[ans===lo?hi:lo,ans+ke,ans-ke]),
+  expl:`Lihat angka ${ke===10?'satuan':'puluhan'}nya, yaitu ${d}. ${d>=5?`Karena ${d} sama dengan atau lebih dari 5, bulatkan ke atas`:`Karena ${d} kurang dari 5, bulatkan ke bawah`} menjadi ${rb(ans)}.`}}},
+{id:'satuan',g:4,name:'Satuan panjang dan berat',icon:'📏',isNew:1,gen(){
+  const f=R(0,4);
+  if(f===0){const m=R(2,9),ans=m*100;return{q:`${m} m = ... cm`,opts:unit(numOpts(ans,[m*10,m*1000,ans+10]),' cm'),expl:`1 m = 100 cm. Jadi ${m} m = ${m} × 100 = ${rb(ans)} cm.`}}
+  if(f===1){const m=R(2,9),c=m*100;return{q:`${rb(c)} cm = ... m`,opts:unit(numOpts(m,[m*10,c/10,m+1]),' m'),expl:`100 cm = 1 m. Jadi ${rb(c)} cm = ${rb(c)} : 100 = ${m} m.`}}
+  if(f===2){const k=R(2,9),ans=k*1000;return{q:`${k} kg = ... g`,opts:unit(numOpts(ans,[k*100,k*10,ans+100]),' g'),expl:`1 kg = 1.000 g. Jadi ${k} kg = ${k} × 1.000 = ${rb(ans)} g.`}}
+  if(f===3){const k=R(2,9),g=k*1000;return{q:`${rb(g)} g = ... kg`,opts:unit(numOpts(k,[k*10,g/100,k+1]),' kg'),expl:`1.000 g = 1 kg. Jadi ${rb(g)} g = ${rb(g)} : 1.000 = ${k} kg.`}}
+  const m=R(1,5),c=R(5,95),ans=m*100+c;
+  return{q:`${m} m ${c} cm = ... cm`,opts:unit(numOpts(ans,[m+c,m*10+c,ans+100]),' cm'),expl:`Ubah meter ke cm dulu: ${m} m = ${m*100} cm. Lalu ${m*100} + ${c} = ${ans} cm.`}}},
+{id:'bandingpec',g:4,name:'Membandingkan pecahan',icon:'⚖️',isNew:1,label:'Mana yang lebih besar?',gen(){
+  let A,B;
+  if(rnd()<.5){const a=R(2,9);let b=R(2,9);while(b===a)b=R(2,9);A=[1,a];B=[1,b]}
+  else{const n=R(4,10),a=R(1,n-1);let b=R(1,n-1);while(b===a)b=R(1,n-1);A=[a,n];B=[b,n]}
+  const big=A[0]/A[1]>B[0]/B[1]?A:B,small=big===A?B:A,sa=`${big[0]}/${big[1]}`,sb=`${small[0]}/${small[1]}`;
+  const expl=A[0]===1&&B[0]===1
+    ?`Kedua pecahan pembilangnya 1. Makin besar penyebutnya, makin kecil potongannya. Kue yang dibagi ${big[1]} potongannya lebih besar daripada kue yang dibagi ${small[1]}. Jadi ${sa} lebih besar.`
+    :`Penyebutnya sama (${big[1]}), jadi cukup bandingkan pembilangnya. ${big[0]} lebih besar dari ${small[0]}, jadi ${sa} lebih besar.`;
+  return{q:`${A[0]}/${A[1]} atau ${B[0]}/${B[1]}`,after:fracBars([A,B]),opts:[sa,sb,'Sama besar'],expl}}},
+{id:'desimal',g:4,name:'Pecahan, desimal, persen',icon:'🔁',isNew:1,gen(){
+  const pool=[[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,10],[3,10],[7,10],[9,10]];
+  const [n,d]=pick(pool),x=n*100/d,dec=(n/d).toLocaleString('id-ID'),pc=x+'%';
+  const others=shuffle(pool.filter(p=>p[0]/p[1]!==n/d)).slice(0,3);
+  const steps=`Ubah dulu menjadi perseratus: ${n}/${d} = ${x}/100 (pembilang dan penyebut dikali ${100/d}).`;
+  if(rnd()<.5)return{q:`${n}/${d} = ... (desimal)`,opts:strOpts(dec,[`${n},${d}`,`0,${n}${d}`,...others.map(p=>(p[0]/p[1]).toLocaleString('id-ID'))]),expl:`${steps} ${x} perseratus ditulis ${dec}.`};
+  return{q:`${n}/${d} = ... %`,opts:strOpts(pc,[`${n}${d}%`,`${n}%`,...others.map(p=>p[0]*100/p[1]+'%')]),expl:`${steps} Perseratus artinya persen, jadi ${n}/${d} = ${pc}.`}}},
+{id:'kelipatan',g:4,name:'Kelipatan dan faktor',icon:'🧮',isNew:1,gen(){
+  if(rnd()<.5){const k=R(3,9),m=k*R(3,9),wr=new Set();while(wr.size<3){const v=R(10,90);if(v%k!==0)wr.add(v)}
+    const list=Array.from({length:Math.max(5,m/k)},(_,i)=>k*(i+1)).join(', ');
+    return{q:`Manakah yang merupakan kelipatan ${k}?`,opts:[String(m),...[...wr].map(String)],expl:`Kelipatan ${k} adalah hasil ${k} × 1, ${k} × 2, ${k} × 3, dan seterusnya: ${list}, … Jadi ${m} adalah kelipatan ${k} karena ${k} × ${m/k} = ${m}.`}}
+  const n=pick([12,16,18,20,24,30,36]),fs=[];for(let i=1;i<=n;i++)if(n%i===0)fs.push(i);
+  const f=pick(fs.filter(x=>x>1&&x<n)),wr=new Set();while(wr.size<3){const v=R(2,n-1);if(n%v!==0)wr.add(v)}
+  return{q:`Manakah yang merupakan faktor ${n}?`,opts:[String(f),...[...wr].map(String)],expl:`Faktor ${n} adalah bilangan yang membagi ${n} sampai habis: ${fs.join(', ')}. ${f} termasuk faktor karena ${n} : ${f} = ${n/f}.`}}},
+
+// ===== Kelas 5 =====
+{id:'pecbeda',g:5,name:'Tambah dan kurang pecahan',icon:'🥧',gen(){
+  const D=[2,3,4,5,6,8,10];let a,b,c,d,plus,L,x,y,n;
+  do{b=pick(D);d=pick(D);while(d===b)d=pick(D);a=R(1,b-1);c=R(1,d-1);plus=rnd()<.6;
+    if(!plus&&a/b<c/d){[a,b,c,d]=[c,d,a,b]}L=lcm(b,d);x=a*L/b;y=c*L/d;n=plus?x+y:x-y}while(n<=0);
+  const ans=fr(n,L),op=plus?'+':'−',wrong=plus?fr(a+c,b+d):(a>c&&b>d?fr(a-c,b-d):fr(n+2,L)),simp=ans!==`${n}/${L}`;
+  return{q:`${a}/${b} ${op} ${c}/${d} = ?`,opts:strOpts(ans,[wrong,fr(n+1,L),fr(Math.max(1,n-1),L),fr(n,L*2),fr(n+3,L)]),
+  expl:`Samakan penyebutnya dulu. KPK dari ${b} dan ${d} adalah ${L}. ${a}/${b} = ${x}/${L} dan ${c}/${d} = ${y}/${L}. Lalu ${x}/${L} ${op} ${y}/${L} = ${n}/${L}${simp?`, disederhanakan menjadi ${ans}`:''}. Ingat, penyebut tidak ikut dijumlahkan atau dikurangkan.`}}},
+{id:'persen',g:5,name:'Persen',icon:'💯',gen(){
+  const p=pick([10,20,25,50,75]),y=20*R(1,25),ans=p*y/100;
+  const tip=p===50?' Trik: 50% sama dengan setengah.':p===25?' Trik: 25% sama dengan seperempat, jadi bagi 4.':p===10?' Trik: 10% berarti bagi 10.':'';
+  return{q:`${p}% dari ${rb(y)} = ?`,opts:numOpts(ans,[y-ans,ans*2,Math.round(ans/2)]),
+  expl:`${p}% artinya ${p}/100. Jadi ${p}/100 × ${rb(y)} = ${rb(ans)}.${tip}`}}},
+{id:'kecepatan',g:5,name:'Kecepatan, jarak, waktu',icon:'🚗',gen(){
+  const v=pick([40,50,60,70,80]),t=R(2,5),s=v*t,m=R(0,2);
+  if(m===0)return{q:`Sebuah mobil melaju dengan kecepatan ${v} km/jam selama ${t} jam. Berapa jarak yang ditempuh?`,opts:unit(numOpts(s,[v+t,s+v,s-v]),' km'),expl:`Jarak = kecepatan × waktu = ${v} × ${t} = ${s} km.`};
+  if(m===1)return{q:`Ayah naik motor menempuh jarak ${s} km dalam ${t} jam. Berapa kecepatan rata-ratanya?`,opts:unit(numOpts(v,[v+10,v-10,s-t]),' km/jam'),expl:`Kecepatan = jarak : waktu = ${s} : ${t} = ${v} km/jam.`};
+  return{q:`Sebuah bus menempuh jarak ${s} km dengan kecepatan ${v} km/jam. Berapa lama perjalanannya?`,opts:unit(numOpts(t,[t+1,t-1,t+2]),' jam'),expl:`Waktu = jarak : kecepatan = ${s} : ${v} = ${t} jam.`}}},
+{id:'volume',g:5,name:'Volume kubus dan balok',icon:'📦',gen(){
+  if(rnd()<.5){const s=R(2,12),ans=s**3;
+    return{q:`Sebuah kubus memiliki panjang rusuk ${s} cm. Berapa volumenya?`,opts:unit(numOpts(ans,[s*s,s*3,s*s*6]),' cm³'),expl:`Volume kubus = rusuk × rusuk × rusuk = ${s} × ${s} × ${s} = ${rb(ans)} cm³.`}}
+  const p=R(4,15),l=R(2,10),t=R(2,10),ans=p*l*t;
+  return{q:`Sebuah balok berukuran panjang ${p} cm, lebar ${l} cm, dan tinggi ${t} cm. Berapa volumenya?`,opts:unit(numOpts(ans,[p*l+t,p+l+t,ans+p*l]),' cm³'),
+  expl:`Volume balok = panjang × lebar × tinggi = ${p} × ${l} × ${t} = ${rb(ans)} cm³.`}}},
+{id:'perbandingan',g:5,name:'Perbandingan',icon:'🛒',isNew:1,gen(){
+  if(rnd()<.5){
+    const item=pick(['buku tulis','pensil','roti','penghapus']),p=pick([500,1000,1500,2000,2500,3000,3500,4000,5000]),a=R(2,5),b=R(a+1,10),ans=b*p;
+    return{q:`Harga ${a} ${item} adalah ${rp(a*p)}. Berapa harga ${b} ${item}?`,opts:numOpts(ans,[a*p*b,ans+p,ans-p]).map(v=>'Rp'+v),
+    expl:`Cari harga 1 ${item} dulu: ${rp(a*p)} : ${a} = ${rp(p)}. Lalu harga ${b} ${item} = ${b} × ${rp(p)} = ${rp(ans)}.`}}
+  const [r1,r2]=pick([[1,2],[2,3],[3,4],[2,5],[3,5],[1,3]]),k=R(2,8),[n1,n2]=rnd()<.5?['Budi','Adi']:['Adi','Budi'];
+  return{q:`Perbandingan kelereng ${n1} dan ${n2} adalah ${r1} : ${r2}. Jika kelereng ${n1} ada ${r1*k}, berapa kelereng ${n2}?`,opts:numOpts(r2*k,[r1*k+(r2-r1),r2*k+r2,r2+k]),
+  expl:`${n1} punya ${r1} bagian, yaitu ${r1*k} kelereng. Jadi 1 bagian = ${r1*k} : ${r1} = ${k} kelereng. ${n2} punya ${r2} bagian, jadi ${r2} × ${k} = ${r2*k} kelereng.`}}},
+{id:'durasi',g:5,name:'Durasi waktu',icon:'⏰',isNew:1,gen(){
+  const tf=m=>{m=((m%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+'.'+String(m%60).padStart(2,'0')};
+  const df=m=>{const h=Math.floor(m/60),mm=m%60;return (h?h+' jam':'')+(h&&mm?' ':'')+(mm?mm+' menit':'')};
+  const s=R(84,180)*5,d=R(5,34)*5,e=s+d,h=Math.floor(d/60),mm=d%60,mid=s+h*60;
+  const act=pick(['Latihan menari','Les mengaji','Kerja kelompok','Bermain bola','Les renang','Les gambar']);
+  const minPart=(from,mins)=>{const toHour=60-from%60;
+    if(mins>toHour&&toHour<60)return `${tf(from)} ke ${tf(from+toHour)} = ${toHour} menit, lalu ${tf(from+toHour)} ke ${tf(from+mins)} = ${mins-toHour} menit, jadi ${mins} menit`;
+    return `${tf(from)} ke ${tf(from+mins)} = ${mins} menit`};
+  if(rnd()<.5){
+    const steps=h?`${tf(s)} + ${h} jam = ${tf(mid)}${mm?`, lalu tambah ${mm} menit menjadi ${tf(e)}`:''}.`:`${tf(s)} + ${mm} menit = ${tf(e)}.`;
+    return{q:`${act} dimulai pukul ${tf(s)} dan berlangsung ${df(d)}. Pukul berapa selesainya?`,opts:strOpts(tf(e),[tf(e+10),tf(e-10),tf(e+60),tf(e-5)]),expl:`Hitung bertahap: tambah jamnya dulu, baru menitnya. ${steps}`}}
+  const expl=h?`Hitung jam penuh dulu: ${tf(s)} ke ${tf(mid)} = ${h} jam.${mm?` Lalu sisa menitnya: ${minPart(mid,mm)}.`:''} Jadi lamanya ${df(d)}.`:`Hitung menitnya: ${minPart(s,mm)}.`;
+  return{q:`${act} dimulai pukul ${tf(s)} dan selesai pukul ${tf(e)}. Berapa lama kegiatannya?`,opts:strOpts(df(d),[df(d+10),df(d>15?d-10:d+20),df(d+60),df(d+5)]),expl}}},
+{id:'hilangkali',g:5,name:'Angka yang hilang (kali dan bagi)',icon:'🕵️',isNew:1,label:'Berapa angka di dalam kotak?',gen(){
+  const b=R(2,12),c=R(2,12),p=b*c,f=R(0,2);
+  if(f===0)return{q:`${BOX} × ${b} = ${p}`,opts:numOpts(c,[p-b,p+b,c+1]),expl:`Bilangan berapa yang dikali ${b} hasilnya ${p}? Hitung ${p} : ${b} = ${c}. Cek: ${c} × ${b} = ${p}.`};
+  if(f===1)return{q:`${p} : ${BOX} = ${c}`,opts:numOpts(b,[p-c,p*c,b+1]),expl:`${p} dibagi berapa hasilnya ${c}? Hitung ${p} : ${c} = ${b}. Cek: ${p} : ${b} = ${c}.`};
+  return{q:`${BOX} : ${b} = ${c}`,opts:numOpts(p,[c>b?c-b:c+b,b+c,p+b]),expl:`Kebalikan dari bagi adalah kali: ${c} × ${b} = ${p}. Cek: ${p} : ${b} = ${c}.`}}},
+
+// ===== Kelas 6 =====
+{id:'bulat',g:6,name:'Bilangan bulat negatif',icon:'🌡️',gen(){
+  const a=R(-15,15);let b=R(-15,15);if(b===0)b=-7;const plus=rnd()<.5,ans=plus?a+b:a-b;
+  const sb=b<0?`(${sg(b)})`:sg(b);let expl;
+  if(plus)expl=b<0?`Menambah bilangan negatif sama dengan mengurangi. ${sg(a)} + (${sg(b)}) = ${sg(a)} − ${-b} = ${sg(ans)}.`:`Mulai dari ${sg(a)} di garis bilangan, lalu geser ${b} langkah ke kanan. Hasilnya ${sg(ans)}.`;
+  else expl=b<0?`Mengurangi bilangan negatif sama dengan menambah. ${sg(a)} − (${sg(b)}) = ${sg(a)} + ${-b} = ${sg(ans)}.`:`Mulai dari ${sg(a)} di garis bilangan, lalu geser ${b} langkah ke kiri. Hasilnya ${sg(ans)}.`;
+  return{q:`${sg(a)} ${plus?'+':'−'} ${sb} = ?`,opts:numOpts(ans,[-ans,plus?a-b:a+b,ans+2],true),expl}}},
+{id:'campuran',g:6,name:'Operasi hitung campuran',icon:'🧩',gen(){
+  const f=R(0,3),rule='Aturannya: kerjakan yang di dalam kurung dulu, lalu kali dan bagi, baru tambah dan kurang. ';
+  if(f===0){const a=R(2,20),b=R(2,9),c=R(2,9),ans=a+b*c;return{q:`${a} + ${b} × ${c} = ?`,opts:numOpts(ans,[(a+b)*c,ans+1,ans-c]),expl:rule+`Kali dulu: ${b} × ${c} = ${b*c}. Lalu ${a} + ${b*c} = ${ans}.`}}
+  if(f===1){const b=R(2,9),c=R(2,9),a=b*c+R(1,30),ans=a-b*c;return{q:`${a} − ${b} × ${c} = ?`,opts:numOpts(ans,[(a-b)*c,ans+1,ans+c]),expl:rule+`Kali dulu: ${b} × ${c} = ${b*c}. Lalu ${a} − ${b*c} = ${ans}.`}}
+  if(f===2){const a=R(2,15),b=R(2,15),c=R(2,6),ans=(a+b)*c;return{q:`(${a} + ${b}) × ${c} = ?`,opts:numOpts(ans,[a+b*c,ans+c,ans-c]),expl:rule+`Dalam kurung dulu: ${a} + ${b} = ${a+b}. Lalu ${a+b} × ${c} = ${ans}.`}}
+  const c=R(2,9),k=R(2,9),b=c*k,a=R(2,30),ans=a+k;
+  return{q:`${a} + ${b} : ${c} = ?`,opts:numOpts(ans,[(a+b)/c,a+b,ans+1]),expl:rule+`Bagi dulu: ${b} : ${c} = ${k}. Lalu ${a} + ${k} = ${ans}.`}}},
+{id:'kpkfpb',g:6,name:'KPK dan FPB',icon:'🔢',gen(){
+  const g=R(2,6),x=R(2,7);let y=R(2,7);while(y===x||gcd(x,y)!==1)y=R(2,7);
+  const a=g*x,b=g*y,isK=rnd()<.5;
+  if(isK){const ans=g*x*y,ma=Array.from({length:y},(_,i)=>a*(i+1)).join(', '),mb=Array.from({length:x},(_,i)=>b*(i+1)).join(', ');
+    return{q:`KPK dari ${a} dan ${b} = ?`,opts:numOpts(ans,[a*b,g,ans*2]),expl:`Tulis kelipatannya. Kelipatan ${a}: ${ma}, … Kelipatan ${b}: ${mb}, … Kelipatan yang sama dan paling kecil adalah ${ans}. Jadi KPK = ${ans}.`}}
+  const fa=n=>Array.from({length:n},(_,i)=>i+1).filter(i=>n%i===0).join(', ');
+  return{q:`FPB dari ${a} dan ${b} = ?`,opts:numOpts(g,[g*2,1,a,g*x*y]),expl:`Tulis faktornya. Faktor ${a}: ${fa(a)}. Faktor ${b}: ${fa(b)}. Faktor yang sama dan paling besar adalah ${g}. Jadi FPB = ${g}.`}}},
+{id:'lingkaran',g:6,name:'Lingkaran',icon:'⭕',gen(){
+  if(rnd()<.6){const r=pick([7,14,21]),isL=rnd()<.5,luas=22*r*r/7,kel=44*r/7,ans=isL?luas:kel;
+    return{q:`Sebuah lingkaran berjari-jari ${r} cm. Berapa ${isL?'luas':'keliling'}nya? (π = 22/7)`,
+    opts:unit(numOpts(ans,isL?[kel,22*4*r*r/7,luas+22]:[luas,22*r/7,kel*2]),isL?' cm²':' cm'),
+    expl:isL?`Luas = π × r × r = 22/7 × ${r} × ${r} = ${rb(luas)} cm².`:`Keliling = 2 × π × r = 2 × 22/7 × ${r} = ${kel} cm.`}}
+  const r=pick([10,20,30]),luas=Math.round(314*r*r/100);
+  return{q:`Sebuah lingkaran berjari-jari ${r} cm. Berapa luasnya? (π = 3,14)`,opts:unit(numOpts(luas,[luas*4,luas+100,luas-100]),' cm²'),
+  expl:`Luas = π × r × r = 3,14 × ${r} × ${r} = ${rb(luas)} cm².`}}},
+{id:'rata',g:6,name:'Rata-rata',icon:'📈',gen(){
+  let n,m,v,last;
+  do{n=R(4,5);m=R(60,90);v=[];for(let i=0;i<n-1;i++)v.push(m+R(-10,10));last=m*n-v.reduce((s,x)=>s+x,0)}while(last<50||last>100);
+  v.push(last);shuffle(v);const sum=m*n;
+  return{q:`Nilai ulangan Rina: ${v.join(', ')}. Berapa nilai rata-ratanya?`,opts:numOpts(m,[m+1,m-1,Math.round(sum/(n-1))]),
+  expl:`Jumlahkan semua nilai: ${v.join(' + ')} = ${sum}. Lalu bagi dengan banyaknya nilai (${n}): ${sum} : ${n} = ${m}.`}}},
+];
+const TRIG={sin:{0:'0',30:'1/2',45:'1/2 √2',60:'1/2 √3',90:'1'},cos:{0:'1',30:'1/2 √3',45:'1/2 √2',60:'1/2',90:'0'},tan:{0:'0',30:'1/3 √3',45:'1',60:'√3'}};
+const nz=(a,b)=>{const v=R(a,b);return v===0?(rnd()<.5?1:-1):v};
+const T_HIGH=[
+// ===== Kelas 7 =====
+{id:'k7_bulat',g:7,name:'Kali dan bagi bilangan bulat',icon:'✖️',gen(){const a=R(2,12)*(rnd()<.5?-1:1),b=R(2,12)*(rnd()<.5?-1:1),beda=(a<0)!==(b<0);
+  if(rnd()<.5){const n=a*b;return{q:`${sg(a)} × ${par(b)} = ?`,opts:numOpts(n,[-n,n+a,-(n+a)],true),expl:`Kalikan angkanya dulu: ${Math.abs(a)} × ${Math.abs(b)} = ${Math.abs(n)}. Lalu tandanya: ${beda?'tanda berbeda menghasilkan negatif':'tanda sama menghasilkan positif'}. Jadi ${sg(n)}.`}}
+  const p=a*b;return{q:`${sg(p)} : ${par(b)} = ?`,opts:numOpts(a,[-a,a+1,-(a+1)],true),expl:`Bagi angkanya dulu: ${Math.abs(p)} : ${Math.abs(b)} = ${Math.abs(a)}. Lalu tandanya: ${beda?'berbeda, jadi hasilnya negatif':'sama, jadi hasilnya positif'}. Jadi ${sg(a)}.`}}},
+{id:'k7_pecahan',g:7,name:'Kali dan bagi pecahan',icon:'🥧',gen(){const a=R(1,5),b=R(a+1,9),c=R(1,5),d=R(c+1,9);
+  if(rnd()<.5){const n=a*c,m=b*d,s=fr(n,m);return{q:`${a}/${b} × ${c}/${d} = ?`,opts:strOpts(s,[fr(a+c,b+d),fr(a*d,b*c),fr(n+1,m),fr(n,m+1)]),expl:`Kalikan pembilang dengan pembilang, penyebut dengan penyebut: ${a} × ${c} = ${n} dan ${b} × ${d} = ${m}. Hasilnya ${n}/${m}${s!==`${n}/${m}`?`, disederhanakan menjadi ${s}`:''}.`}}
+  const n=a*d,m=b*c,s=fr(n,m);return{q:`${a}/${b} : ${c}/${d} = ?`,opts:strOpts(s,[fr(a*c,b*d),fr(m,n),fr(n+1,m),fr(a+c,b+d)]),expl:`Membagi pecahan sama dengan mengalikan dengan kebalikannya: ${a}/${b} × ${d}/${c} = ${n}/${m}${s!==`${n}/${m}`?` = ${s}`:''}.`}}},
+{id:'k7_aljabar',g:7,name:'Bentuk aljabar',icon:'🔤',gen(){
+  if(rnd()<.5){const a=R(2,9),b=R(2,9),c=R(1,a+b-1),n=a+b-c,t=k=>k===1?'x':k+'x';return{q:`${a}x + ${b}x − ${c}x = ?`,opts:strOpts(t(n),[t(a+b+c),t(a+b),t(n+1),`${n}`]),expl:`Suku-suku sejenis (sama-sama x) dihitung koefisiennya: ${a} + ${b} − ${c} = ${n}. Jadi ${t(n)}.`}}
+  const k=R(2,6),b=R(1,9);return{q:`${k}(x + ${b}) = ?`,opts:strOpts(`${k}x + ${k*b}`,[`${k}x + ${b}`,`x + ${k*b}`,`${k}x + ${k+b}`]),expl:`Kalikan ${k} ke setiap suku di dalam kurung: ${k} × x = ${k}x dan ${k} × ${b} = ${k*b}. Jadi ${k}x + ${k*b}.`}}},
+{id:'k7_plsv',g:7,name:'Persamaan linear satu variabel',icon:'⚖️',gen(){const a=R(2,9),x=R(-5,12),b=nz(-15,20),c=a*x+b;
+  return{q:`${a}x ${pm(b)} = ${sg(c)}, maka x = ?`,opts:numOpts(x,[(c+b)/a,-x,x+1],true),expl:`Pindahkan ${sg(b)} ke ruas kanan dengan tanda kebalikannya: ${a}x = ${sg(c)} ${pm(-b)} = ${sg(c-b)}. Lalu bagi dengan ${a}: x = ${sg(c-b)} : ${a} = ${sg(x)}.`}}},
+{id:'k7_banding',g:7,name:'Perbandingan senilai dan berbalik nilai',icon:'👷',gen(){
+  if(rnd()<.5){const p=R(2,6),h=pick([6,8,10,12,15,20,24]);let q;do{q=R(2,12)}while(q===p||(p*h)%q);const v=p*h/q;
+    return{q:`${p} pekerja menyelesaikan pekerjaan dalam ${h} hari. Jika ada ${q} pekerja, berapa hari pekerjaan selesai?`,opts:unit(numOpts(v,[h*q/p,h+q-p,v+1]),' hari'),expl:`Ini perbandingan berbalik nilai: makin banyak pekerja, makin cepat selesai. ${p} × ${h} = ${p*h}. Lalu ${p*h} : ${q} = ${v} hari.`}}
+  const a=R(2,6),hrg=pick([2500,3000,4000,5000,7500]),b=R(a+1,12);
+  return{q:`Harga ${a} kg gula ${rp(a*hrg)}. Berapa harga ${b} kg?`,opts:numOpts(b*hrg,[a*hrg+b,b*hrg+hrg,b*hrg-hrg]).map(v=>'Rp'+v),expl:`Ini perbandingan senilai. Harga 1 kg = ${rp(a*hrg)} : ${a} = ${rp(hrg)}. Harga ${b} kg = ${b} × ${rp(hrg)} = ${rp(b*hrg)}.`}}},
+{id:'k7_sudut',g:7,name:'Sudut berpelurus dan berpenyiku',icon:'📐',gen(){
+  if(rnd()<.5){const a=R(10,170);return{q:`Pelurus sudut ${a}° adalah ?`,opts:unit(numOpts(180-a,[90-a,360-a,190-a]),'°'),expl:`Dua sudut berpelurus jumlahnya 180°. Jadi 180° − ${a}° = ${180-a}°.`}}
+  const a=R(5,85);return{q:`Penyiku sudut ${a}° adalah ?`,opts:unit(numOpts(90-a,[180-a,100-a,a]),'°'),expl:`Dua sudut berpenyiku jumlahnya 90°. Jadi 90° − ${a}° = ${90-a}°.`}}},
+{id:'k7_diskon',g:7,name:'Diskon, untung, dan rugi',icon:'🏷️',gen(){
+  if(rnd()<.5){const h=pick([40,50,60,80,100,120,150,200])*1000,d=pick([10,20,25,30,40,50]),pot=h*d/100;return{q:`Sepatu seharga ${rp(h)} didiskon ${d}%. Berapa yang harus dibayar?`,opts:numOpts(h-pot,[pot,h-d*1000,h-pot+5000]).map(v=>'Rp'+v),expl:`Potongan = ${d}% × ${rp(h)} = ${rp(pot)}. Yang dibayar = ${rp(h)} − ${rp(pot)} = ${rp(h-pot)}.`}}
+  const beli=pick([20,25,40,50,80,100])*1000,p=pick([10,20,25,50]),u=rnd()<.6,jual=u?beli+beli*p/100:beli-beli*p/100;
+  return{q:`Pedagang membeli barang ${rp(beli)} dan menjualnya ${rp(jual)}. Berapa persen ${u?'untungnya':'ruginya'}?`,opts:unit(numOpts(p,[p+5,p*2,100-p]),'%'),expl:`${u?'Untung':'Rugi'} = ${rp(Math.abs(jual-beli))}. Persentase = ${rp(Math.abs(jual-beli))} : ${rp(beli)} × 100% = ${p}%.`}}},
+// ===== Kelas 8 =====
+{id:'k8_pola',g:8,name:'Pola bilangan (suku ke-n)',icon:'🔁',gen(){const a=R(1,12),b=R(2,9),n=pick([10,12,15,20,25]),un=a+(n-1)*b;
+  return{q:`Pola: ${a}, ${a+b}, ${a+2*b}, ${a+3*b}, … Suku ke-${n} adalah ?`,opts:numOpts(un,[a+n*b,un-b,n*b]),expl:`Suku pertama a = ${a}, beda b = ${b}. U<sub>n</sub> = a + (n − 1)b = ${a} + (${n} − 1) × ${b} = ${a} + ${(n-1)*b} = ${un}.`}}},
+{id:'k8_fungsi',g:8,name:'Nilai fungsi',icon:'📈',gen(){const a=R(2,7)*(rnd()<.3?-1:1),b=R(-9,12),k=R(-5,8),n=a*k+b;
+  return{q:`f(x) = ${lin(a,b)}. Nilai f(${sg(k)}) = ?`,opts:numOpts(n,[a*k-b,a+k+b,-n],true),expl:`Ganti x dengan ${sg(k)}: f(${sg(k)}) = ${sg(a)} × ${par(k)}${b===0?'':' '+pm(b)} = ${sg(a*k)}${b===0?'':' '+pm(b)} = ${sg(n)}.`}}},
+{id:'k8_gradien',g:8,name:'Gradien garis',icon:'📉',gen(){const m=nz(-4,5),x1=R(-5,5),y1=R(-5,5),dx=R(1,4),x2=x1+dx,y2=y1+m*dx,P=(x,y)=>`(${sg(x)}, ${sg(y)})`;
+  return{q:`Gradien garis yang melalui ${P(x1,y1)} dan ${P(x2,y2)} adalah ?`,opts:numOpts(m,[-m,dx,m+1],true),expl:`m = (y<sub>2</sub> − y<sub>1</sub>) : (x<sub>2</sub> − x<sub>1</sub>) = (${sg(y2)} − ${par(y1)}) : (${sg(x2)} − ${par(x1)}) = ${sg(y2-y1)} : ${dx} = ${sg(m)}.`}}},
+{id:'k8_spldv',g:8,name:'Sistem persamaan dua variabel',icon:'🔀',gen(){const x=R(1,12),y=R(1,12),s=x+y,d=x-y,ask=rnd()<.5?'x':'y',ans=ask==='x'?x:y;
+  return{q:`x + y = ${s} dan x − y = ${sg(d)}. Nilai ${ask} = ?`,opts:numOpts(ans,[ask==='x'?y:x,s,ans+1],true),expl:`Jumlahkan kedua persamaan: 2x = ${s} + ${par(d)} = ${s+d}, jadi x = ${x}. Lalu y = ${s} − ${x} = ${y}. Jadi ${ask} = ${ans}.`}}},
+{id:'k8_pyth',g:8,name:'Teorema Pythagoras',icon:'📐',gen(){const [a,b,c]=pick([[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[7,24,25],[12,16,20]]);
+  if(rnd()<.5)return{q:`Sisi tegak segitiga siku-siku ${a} cm dan ${b} cm. Panjang sisi miringnya?`,visual:triSVG(a,b,'?'),opts:unit(numOpts(c,[a+b,c+1,b]),' cm'),expl:`c${sup(2)} = a${sup(2)} + b${sup(2)} = ${a*a} + ${b*b} = ${c*c}. Jadi c = √${c*c} = ${c} cm.`};
+  return{q:`Sisi miring segitiga siku-siku ${c} cm dan satu sisi tegaknya ${a} cm. Panjang sisi tegak lainnya?`,visual:triSVG(a,'?',c),opts:unit(numOpts(b,[c-a,c+a,b+1]),' cm'),expl:`b${sup(2)} = c${sup(2)} − a${sup(2)} = ${c*c} − ${a*a} = ${b*b}. Jadi b = √${b*b} = ${b} cm.`}}},
+{id:'k8_stat',g:8,name:'Median dan modus',icon:'📊',gen(){const vals=shuffle([4,5,6,7,8,9,10]).slice(0,5),mo=pick(vals),v=shuffle([...vals,mo,mo]),s=v.slice().sort((x,y)=>x-y),med=s[3];
+  if(rnd()<.5)return{q:`Data nilai: ${v.join(', ')}. Modusnya adalah ?`,opts:numOpts(mo,[med,s[6],s[0]]),expl:`Modus adalah nilai yang paling sering muncul. ${mo} muncul 3 kali, nilai lain hanya sekali. Jadi modusnya ${mo}.`};
+  return{q:`Data nilai: ${v.join(', ')}. Mediannya adalah ?`,opts:numOpts(med,[mo,s[2],s[4]]),expl:`Urutkan dulu: ${s.join(', ')}. Ada 7 data, jadi median adalah data ke-4, yaitu ${med}.`}}},
+{id:'k8_peluang',g:8,name:'Peluang sederhana',icon:'🎲',gen(){const [d,set]=pick([['mata dadu genap',[2,4,6]],['mata dadu ganjil',[1,3,5]],['mata dadu lebih dari 4',[5,6]],['mata dadu kurang dari 3',[1,2]],['mata dadu prima',[2,3,5]],['mata dadu 6',[6]],['mata dadu faktor dari 6',[1,2,3,6]]]),k=set.length,s=fr(k,6);
+  return{q:`Sebuah dadu dilempar sekali. Peluang muncul ${d} adalah ?`,opts:strOpts(s,[fr(6-k,6),fr(k,12),fr(1,k+1),fr(k+1,6)].filter(x=>x!==s)),expl:`Kejadian yang diharapkan: ${set.join(', ')} (ada ${k}). Semua kemungkinan ada 6. Peluang = ${k}/6${s!==`${k}/6`?` = ${s}`:''}.`}}},
+// ===== Kelas 9 =====
+{id:'k9_pangkat',g:9,name:'Bilangan berpangkat',icon:'🔺',gen(){const f=R(0,2);
+  if(f===0){const a=pick([2,3,5]),m=R(1,4),n=R(1,3),e=m+n;return{q:`${a}${sup(m)} × ${a}${sup(n)} = ?`,opts:numOpts(a**e,[a**(m*n),a**e*a,a**(e-1)]),expl:`Perkalian dengan bilangan pokok sama: pangkatnya dijumlahkan. ${a}${sup(m)} × ${a}${sup(n)} = ${a}${sup(e)} = ${rb(a**e)}.`}}
+  if(f===1){const a=pick([2,3,4,5,10]),n=pick([2,3]);return{q:`${a}${sup('−'+n)} = ?`,opts:strOpts(`1/${a**n}`,[`−${rb(a**n)}`,`${rb(a**n)}`,`1/${a*n}`,`−1/${a**n}`]),expl:`Pangkat negatif berarti kebalikan: ${a}${sup('−'+n)} = 1/${a}${sup(n)} = 1/${a**n}.`}}
+  const a=R(2,12);return{q:`${a}${sup(0)} + ${a}${sup(1)} = ?`,opts:numOpts(1+a,[a,2*a,a+2]),expl:`Bilangan (bukan nol) pangkat 0 hasilnya 1, dan pangkat 1 hasilnya bilangan itu sendiri. Jadi 1 + ${a} = ${1+a}.`}}},
+{id:'k9_akar',g:9,name:'Bentuk akar',icon:'√',gen(){
+  if(rnd()<.5){const n=R(2,20);return{q:`√${n*n} = ?`,opts:numOpts(n,[n*2,n+1,n-1]),expl:`Cari bilangan yang jika dikuadratkan hasilnya ${n*n}: ${n} × ${n} = ${n*n}. Jadi √${n*n} = ${n}.`}}
+  const a=R(2,7),b=pick([2,3,5,6,7]),v=a*a*b;return{q:`Bentuk sederhana dari √${v} adalah ?`,opts:strOpts(`${a}√${b}`,[`${b}√${a}`,`${a*a}√${b}`,`${a}√${b*2}`,`${a+1}√${b}`]),expl:`Pecah menjadi kuadrat sempurna: √${v} = √(${a*a} × ${b}) = √${a*a} × √${b} = ${a}√${b}.`}}},
+{id:'k9_kuadrat',g:9,name:'Akar persamaan kuadrat',icon:'🧩',gen(){let p=R(-6,8),q=R(-6,8);if(p===q)q=p+2;const r1=Math.min(p,q),r2=Math.max(p,q),b=-(r1+r2),c=r1*r2;
+  const term=(k,s)=>k===0?'':`${k<0?' − ':' + '}${Math.abs(k)===1&&s?'':Math.abs(k)}${s}`,A=(x,y)=>`${sg(x)} dan ${sg(y)}`,fx=r=>r===0?'x':`(x ${pm(-r)})`;
+  return{q:`Akar-akar x${sup(2)}${term(b,'x')}${term(c,'')} = 0 adalah ?`,opts:strOpts(A(r1,r2),[A(-r2,-r1),A(r1,-r2),A(r1+1,r2),A(-r1,r2)]),
+  expl:`Cari dua bilangan yang jumlahnya ${sg(-b)} dan hasil kalinya ${sg(c)}, yaitu ${sg(r1)} dan ${sg(r2)}. Jadi ${fx(r1)}${fx(r2)} = 0, akarnya x = ${sg(r1)} atau x = ${sg(r2)}.`}}},
+{id:'k9_puncak',g:9,name:'Titik puncak fungsi kuadrat',icon:'⛰️',gen(){const h=R(-5,5),k=R(-9,9),b=-2*h,c=h*h+k,term=(v,s)=>v===0?'':`${v<0?' − ':' + '}${Math.abs(v)}${s}`,P=(x,y)=>`(${sg(x)}, ${sg(y)})`;
+  return{q:`Titik puncak grafik y = x${sup(2)}${term(b,'x')}${term(c,'')} adalah ?`,opts:strOpts(P(h,k),[P(-h,k),P(h,c),P(k,h),P(h,-k)]),
+  expl:`x puncak = −b : (2a) = ${sg(-b)} : 2 = ${sg(h)}. Masukkan ke fungsi: y = (${sg(h)})${sup(2)}${term(b,`(${sg(h)})`)}${term(c,'')} = ${sg(k)}. Jadi titik puncaknya ${P(h,k)}.`}}},
+{id:'k9_tabung',g:9,name:'Volume tabung, kerucut, bola',icon:'🥫',gen(){const f=R(0,2);
+  if(f===0){const r=pick([7,14]),t=pick([10,12,15,20]),v=22*r*r*t/7;return{q:`Volume tabung berjari-jari ${r} cm dan tinggi ${t} cm adalah ? (π = 22/7)`,opts:unit(numOpts(v,[v/2,2*22*r*t/7,v*2]),' cm³'),expl:`V = π × r × r × t = 22/7 × ${r} × ${r} × ${t} = ${rb(v)} cm³.`}}
+  if(f===1){const r=pick([7,14]),t=pick([6,9,12,15,21,30]),v=22*r*r*t/21;return{q:`Volume kerucut berjari-jari ${r} cm dan tinggi ${t} cm adalah ? (π = 22/7)`,opts:unit(numOpts(v,[v*3,v/2,v+r]),' cm³'),expl:`V = 1/3 × π × r × r × t = 1/3 × 22/7 × ${r} × ${r} × ${t} = ${rb(v)} cm³.`}}
+  const r=21,v=88*r**3/21;return{q:`Volume bola berjari-jari ${r} cm adalah ? (π = 22/7)`,opts:unit(numOpts(v,[v*3/4,4*22*r*r/7,v/2]),' cm³'),expl:`V = 4/3 × π × r³ = 4/3 × 22/7 × ${r} × ${r} × ${r} = ${rb(v)} cm³.`}}},
+{id:'k9_sebangun',g:9,name:'Kesebangunan',icon:'🔍',gen(){const a=R(2,6),b=R(a+1,10),k=R(2,4);
+  return{q:`Dua persegi panjang sebangun. Yang kecil berukuran panjang ${b} cm dan lebar ${a} cm. Jika panjang yang besar ${b*k} cm, berapa lebarnya?`,opts:unit(numOpts(a*k,[a+b*k-b,b*k-a,a*k+1]),' cm'),expl:`Faktor perbesaran = ${b*k} : ${b} = ${k}. Lebar yang besar = ${a} × ${k} = ${a*k} cm.`}}},
+{id:'k9_transformasi',g:9,name:'Transformasi titik',icon:'🪞',gen(){const x=nz(-6,6),y=nz(-6,6),P=(p,q)=>`(${sg(p)}, ${sg(q)})`,f=R(0,2);
+  if(f===0){const a=nz(-5,5),b=nz(-5,5);return{q:`Titik ${P(x,y)} ditranslasi oleh (${sg(a)}, ${sg(b)}). Bayangannya adalah ?`,opts:strOpts(P(x+a,y+b),[P(x-a,y-b),P(x+b,y+a),P(a,b),P(x*a,y*b)]),expl:`Translasi berarti menambahkan pergeserannya: (${sg(x)} + ${par(a)}, ${sg(y)} + ${par(b)}) = ${P(x+a,y+b)}.`}}
+  if(f===1)return{q:`Bayangan titik ${P(x,y)} oleh pencerminan terhadap sumbu x adalah ?`,opts:strOpts(P(x,-y),[P(-x,y),P(-x,-y),P(y,x)]),expl:`Pencerminan terhadap sumbu x: x tetap, tanda y dibalik. Jadi ${P(x,-y)}.`};
+  return{q:`Bayangan titik ${P(x,y)} oleh pencerminan terhadap sumbu y adalah ?`,opts:strOpts(P(-x,y),[P(x,-y),P(-x,-y),P(y,x)]),expl:`Pencerminan terhadap sumbu y: y tetap, tanda x dibalik. Jadi ${P(-x,y)}.`}}},
+// ===== Kelas 10 =====
+{id:'k10_eksponen',g:10,name:'Persamaan eksponen',icon:'🚀',gen(){const a=pick([2,3,5]),x=R(1,6),v=a**x;
+  if(rnd()<.5)return{q:`${a}${sup('x')} = ${rb(v)}, maka x = ?`,opts:numOpts(x,[x+1,x-1,x+2]),expl:`Ubah ${rb(v)} menjadi pangkat ${a}: ${rb(v)} = ${a}${sup(x)}. Karena bilangan pokoknya sama, x = ${x}.`};
+  const k=R(1,4);return{q:`${a}${sup('x + '+k)} = ${rb(a**(x+k))}, maka x = ?`,opts:numOpts(x,[x+k,x+1,k]),expl:`${rb(a**(x+k))} = ${a}${sup(x+k)}. Jadi x + ${k} = ${x+k}, maka x = ${x}.`}}},
+{id:'k10_log',g:10,name:'Logaritma',icon:'📚',gen(){const a=pick([2,3,5,10]),n=R(1,5),L=(b,x)=>`${b===10?'':sup(b)}log ${rb(x)}`;
+  if(rnd()<.5)return{q:`${L(a,a**n)} = ?`,opts:numOpts(n,[n+1,n-1,a]),expl:`${L(a,a**n)} artinya: ${a} dipangkatkan berapa supaya hasilnya ${rb(a**n)}? Karena ${a}${sup(n)} = ${rb(a**n)}, jawabannya ${n}.`};
+  const m=R(1,4);return{q:`${L(a,a**n)} + ${L(a,a**m)} = ?`,opts:numOpts(n+m,[n*m,n+m+1,Math.abs(n-m)]),expl:`${L(a,a**n)} = ${n} dan ${L(a,a**m)} = ${m}. Jadi ${n} + ${m} = ${n+m}. Bisa juga memakai sifat log a + log b = log (a × b).`}}},
+{id:'k10_deret',g:10,name:'Barisan dan deret aritmetika',icon:'🪜',gen(){const a=R(1,10),b=R(2,6),n=pick([8,10,12,15,20]),un=a+(n-1)*b,sn=n*(a+un)/2;
+  if(rnd()<.5)return{q:`Barisan ${a}, ${a+b}, ${a+2*b}, … Suku ke-${n} adalah ?`,opts:numOpts(un,[a+n*b,un-b,sn]),expl:`U<sub>n</sub> = a + (n − 1)b = ${a} + ${n-1} × ${b} = ${un}.`};
+  return{q:`Jumlah ${n} suku pertama deret ${a} + ${a+b} + ${a+2*b} + … adalah ?`,opts:numOpts(sn,[un,n*un,sn+b]),expl:`U<sub>${n}</sub> = ${a} + ${n-1} × ${b} = ${un}. S<sub>n</sub> = n/2 × (a + U<sub>n</sub>) = ${n}/2 × (${a} + ${un}) = ${rb(sn)}.`}}},
+{id:'k10_geometri',g:10,name:'Barisan geometri',icon:'🧬',gen(){const a=R(1,5),r=pick([2,3]),n=R(4,7),un=a*r**(n-1);
+  return{q:`Barisan ${a}, ${a*r}, ${a*r*r}, … Suku ke-${n} adalah ?`,opts:numOpts(un,[a*r**n,un/r,a+(n-1)*r]),expl:`Rasio r = ${a*r} : ${a} = ${r}. U<sub>n</sub> = a × r${sup('n − 1')} = ${a} × ${r}${sup(n-1)} = ${rb(un)}.`}}},
+{id:'k10_trigo',g:10,name:'Trigonometri sudut istimewa',icon:'📐',gen(){const f=pick(['sin','cos','tan']),d=pick(Object.keys(TRIG[f])),ans=TRIG[f][d],pool=['0','1/2','1/2 √2','1/2 √3','1','√3','1/3 √3'];
+  const rumus=f==='sin'?'sisi depan : sisi miring':f==='cos'?'sisi samping : sisi miring':'sisi depan : sisi samping';
+  const seg=d==='45'?'Pada segitiga siku-siku sama kaki, sisi-sisinya 1, 1, dan √2.':(d==='30'||d==='60')?'Pada segitiga 30°-60°-90°, sisi di depan 30° = 1, di depan 60° = √3, dan sisi miring = 2.':'Sudut 0° dan 90° adalah sudut batas yang perlu dihafal.';
+  return{q:`${f} ${d}° = ?`,opts:strOpts(ans,shuffle(pool.filter(x=>x!==ans))),expl:`${f} = ${rumus}. ${seg} Jadi ${f} ${d}° = ${ans}.`}}},
+{id:'k10_komposisi',g:10,name:'Fungsi komposisi',icon:'🔗',gen(){const a=R(2,5),b=R(-6,6),c=R(2,4),d=R(-5,5),k=R(-3,4),gk=c*k+d,ans=a*gk+b;
+  return{q:`f(x) = ${lin(a,b)} dan g(x) = ${lin(c,d)}. Nilai (f ∘ g)(${sg(k)}) = ?`,opts:numOpts(ans,[c*(a*k+b)+d,a*k+b+gk,ans+a],true),
+  expl:`Hitung g dulu: g(${sg(k)}) = ${c} × ${par(k)}${d===0?'':' '+pm(d)} = ${sg(gk)}. Lalu f(${sg(gk)}) = ${a} × ${par(gk)}${b===0?'':' '+pm(b)} = ${sg(ans)}.`}}},
+{id:'k10_stat',g:10,name:'Rata-rata gabungan',icon:'📊',gen(){let n1,n2,m1,m2,t;do{n1=pick([10,15,20,25]);n2=pick([10,15,20,25]);m1=R(60,85);m2=R(60,90);t=n1*m1+n2*m2}while(t%(n1+n2)||m1===m2);const m=t/(n1+n2);
+  return{q:`Rata-rata ${n1} siswa kelas A adalah ${m1}, dan rata-rata ${n2} siswa kelas B adalah ${m2}. Rata-rata gabungannya?`,opts:numOpts(m,[Math.round((m1+m2)/2)===m?m+2:Math.round((m1+m2)/2),m+1,m-1]),
+  expl:`Jumlah nilai A = ${n1} × ${m1} = ${n1*m1}. Jumlah nilai B = ${n2} × ${m2} = ${n2*m2}. Rata-rata gabungan = (${n1*m1} + ${n2*m2}) : ${n1+n2} = ${m}.`}}},
+// ===== Kelas 11 =====
+{id:'k11_matriks',g:11,name:'Determinan matriks',icon:'🔲',label:'Determinan matriks ini adalah?',gen(){const [a,b,c,d]=[R(-5,9),R(-5,9),R(-5,9),R(-5,9)],det=a*d-b*c;
+  return{q:'',visual:matHTML([[a,b],[c,d]]),opts:numOpts(det,[a*d+b*c,a*b-c*d,-det],true),expl:`det = (a × d) − (b × c) = (${sg(a)} × ${par(d)}) − (${sg(b)} × ${par(c)}) = ${sg(a*d)} − ${par(b*c)} = ${sg(det)}.`}}},
+{id:'k11_invers',g:11,name:'Fungsi invers',icon:'↩️',gen(){const a=R(2,6),x=R(-4,8),b=nz(-9,9),y=a*x+b;
+  return{q:`f(x) = ${lin(a,b)}. Nilai f${sup('−1')}(${sg(y)}) = ?`,opts:numOpts(x,[a*y+b,y,x+1],true),expl:`f${sup('−1')}(x) = (x ${pm(-b)}) : ${a}. Jadi f${sup('−1')}(${sg(y)}) = (${sg(y)} ${pm(-b)}) : ${a} = ${sg(y-b)} : ${a} = ${sg(x)}.`}}},
+{id:'k11_sisa',g:11,name:'Teorema sisa suku banyak',icon:'🧮',gen(){const p=R(1,3),q=R(-5,5),r=R(-6,6),s=R(-9,9),k=nz(-3,3),P=x=>p*x**3+q*x**2+r*x+s,ans=P(k);
+  const T=(c,v,first)=>c===0?'':`${c<0?(first?'−':' − '):(first?'':' + ')}${Math.abs(c)===1&&v?'':Math.abs(c)}${v}`,poly=`${T(p,'x'+sup(3),true)}${T(q,'x'+sup(2))}${T(r,'x')}${T(s,'')}`;
+  return{q:`Sisa pembagian P(x) = ${poly} oleh (x ${pm(-k)}) adalah ?`,opts:numOpts(ans,[P(-k),ans+s,ans-k],true),expl:`Menurut teorema sisa, sisanya = P(${sg(k)}). P(${sg(k)}) = ${p}(${sg(k)})${sup(3)} ${pm(q)}(${sg(k)})${sup(2)} ${pm(r)}(${sg(k)}) ${pm(s)} = ${sg(ans)}.`}}},
+{id:'k11_limit',g:11,name:'Limit fungsi aljabar',icon:'♾️',gen(){
+  if(rnd()<.5){const a=R(1,7);return{q:`lim<sub>x→${a}</sub> (x${sup(2)} − ${a*a}) : (x − ${a}) = ?`,opts:numOpts(2*a,[a,a*a,0]),expl:`Kalau x = ${a} langsung dimasukkan, hasilnya 0 : 0. Faktorkan: x${sup(2)} − ${a*a} = (x − ${a})(x + ${a}). Coret (x − ${a}), tersisa x + ${a}. Masukkan x = ${a}: ${a} + ${a} = ${2*a}.`}}
+  const b=R(-4,6),c=R(-9,9),k=R(-3,4),v=k*k+b*k+c;return{q:`lim<sub>x→${sg(k)}</sub> (x${sup(2)}${b===0?'':' '+pm(b)+'x'}${c===0?'':' '+pm(c)}) = ?`,opts:numOpts(v,[v+1,k*k+c===v?v-1:k*k+c,-v],true),
+  expl:`Untuk fungsi polinom, cukup substitusikan x = ${sg(k)}: (${sg(k)})${sup(2)}${b===0?'':` ${pm(b)}(${sg(k)})`}${c===0?'':' '+pm(c)} = ${sg(v)}.`}}},
+{id:'k11_turunan',g:11,name:'Turunan fungsi',icon:'📈',gen(){const a=R(1,5),n=R(2,4),b=R(-6,6),k=R(-3,3),ans=a*n*k**(n-1)+b,pw=e=>e===1?'':sup(e);
+  return{q:`f(x) = ${a===1?'':a}x${sup(n)}${b===0?'':' '+pm(b)+'x'}. Nilai f'(${sg(k)}) = ?`,opts:numOpts(ans,[a*k**n+b*k,a*n*k**n+b,ans+b===ans?ans+1:ans+b],true),
+  expl:`Turunkan: f'(x) = ${a*n}x${pw(n-1)}${b===0?'':' '+pm(b)}. Lalu f'(${sg(k)}) = ${a*n} × (${sg(k)})${pw(n-1)}${b===0?'':' '+pm(b)} = ${sg(ans)}.`}}},
+{id:'k11_lingkaran',g:11,name:'Persamaan lingkaran',icon:'⭕',gen(){const a=nz(-5,5),b=nz(-5,5),r=R(2,9),T=(v,s)=>`(${s} ${pm(-v)})${sup(2)}`,eq=`${T(a,'x')} + ${T(b,'y')} = ${r*r}`,P=(x,y)=>`(${sg(x)}, ${sg(y)})`;
+  if(rnd()<.5)return{q:`Jari-jari lingkaran ${eq} adalah ?`,opts:numOpts(r,[r*r,2*r,r+1]),expl:`Bentuk umum (x − a)${sup(2)} + (y − b)${sup(2)} = r${sup(2)}. Di sini r${sup(2)} = ${r*r}, jadi r = √${r*r} = ${r}.`};
+  return{q:`Pusat lingkaran ${eq} adalah ?`,opts:strOpts(P(a,b),[P(-a,-b),P(b,a),P(a,-b),P(-a,b)]),expl:`Bentuk (x − a)${sup(2)} + (y − b)${sup(2)} = r${sup(2)} berpusat di (a, b). Perhatikan, tandanya kebalikan dari yang tertulis di dalam kurung. Jadi pusatnya ${P(a,b)}.`}}},
+{id:'k11_proglin',g:11,name:'Program linear',icon:'🎯',gen(){const p=R(2,6),q=R(2,6),pts=[[0,R(3,8)],[R(2,5),R(2,5)],[R(4,9),0]],vs=pts.map(([x,y])=>p*x+q*y),mx=Math.max(...vs),P=([x,y])=>`(${x}, ${y})`;
+  return{q:`Titik pojok daerah penyelesaian: ${pts.map(P).join(', ')}, dan (0, 0). Nilai maksimum f(x, y) = ${p}x + ${q}y adalah ?`,opts:numOpts(mx,[Math.min(...vs),vs.find(v=>v!==mx)??mx+1,mx+p]),
+  expl:`Uji setiap titik pojok: ${pts.map((t,i)=>`f${P(t)} = ${vs[i]}`).join(', ')}, f(0, 0) = 0. Nilai terbesar adalah ${mx}.`}}},
+// ===== Kelas 12 =====
+{id:'k12_integral',g:12,name:'Integral tak tentu',icon:'∫',gen(){const n=R(1,4),c=(n+1)*R(1,4),k=c/(n+1),X=(co,p)=>`${co===1?'':co}x${p===1?'':sup(p)}`;
+  return{q:`∫ ${X(c,n)} dx = ?`,opts:strOpts(`${X(k,n+1)} + C`,[n>1?`${X(c*n,n-1)} + C`:`${c} + C`,`${X(c,n+1)} + C`,`${X(k,n)} + C`,`${X(k+1,n+1)} + C`]),
+  expl:`Rumus: ∫ ax${sup('n')} dx = a : (n + 1) × x${sup('n + 1')} + C. Jadi ${c} : ${n+1} = ${k}, dan pangkatnya menjadi ${n+1}. Hasilnya ${X(k,n+1)} + C.`}}},
+{id:'k12_tentu',g:12,name:'Integral tentu',icon:'📏',gen(){const a=R(0,2),b=R(a+1,a+4),c=R(1,4)*2,h=c/2,Fv=x=>h*x*x,ans=Fv(b)-Fv(a),co=h===1?'':h;
+  return{q:`∫<sub>${a}</sub><sup>${b}</sup> ${c}x dx = ?`,opts:numOpts(ans,[c*(b-a),Fv(b),ans+c]),expl:`Integral dari ${c}x adalah ${co}x${sup(2)}. Masukkan batasnya: ${co}(${b})${sup(2)} − ${co}(${a})${sup(2)} = ${Fv(b)} − ${Fv(a)} = ${ans}.`}}},
+{id:'k12_kombinasi',g:12,name:'Permutasi dan kombinasi',icon:'🎟️',gen(){const n=R(5,10),r=R(2,3),Pm=(n,r)=>{let v=1;for(let i=0;i<r;i++)v*=n-i;return v},fact=k=>k<=1?1:k*fact(k-1),C=Pm(n,r)/fact(r),kali=Array.from({length:r},(_,i)=>n-i).join(' × ');
+  if(rnd()<.5)return{q:`Dari ${n} siswa akan dipilih ${r} orang sebagai perwakilan. Banyak cara memilih adalah ?`,opts:numOpts(C,[Pm(n,r),n*r,C+n]),expl:`Urutan tidak penting, jadi pakai kombinasi: C(${n}, ${r}) = (${kali}) : ${fact(r)} = ${C}.`};
+  return{q:`Dari ${n} siswa akan dipilih ${r===3?'ketua, wakil, dan sekretaris':'ketua dan wakil'}. Banyak susunan yang mungkin adalah ?`,opts:numOpts(Pm(n,r),[C,n*r,Pm(n,r)+n]),expl:`Urutan (jabatan) penting, jadi pakai permutasi: P(${n}, ${r}) = ${kali} = ${Pm(n,r)}.`}}},
+{id:'k12_peluang',g:12,name:'Peluang kejadian',icon:'🎱',gen(){
+  if(rnd()<.6){const m=R(2,7),b=R(2,7),h=R(0,4),t=m+b+h,[nm,k]=pick([['merah',m],['biru',b]]),s=fr(k,t);
+    return{q:`Kantong berisi ${m} bola merah, ${b} bola biru${h?`, dan ${h} bola hijau`:''}. Diambil 1 bola. Peluang terambil bola ${nm}?`,opts:strOpts(s,[fr(t-k,t),fr(1,t),fr(k,t+1),fr(k+1,t)].filter(x=>x!==s)),expl:`Banyak bola ${nm} = ${k}, total bola = ${t}. Peluang = ${k}/${t}${s!==`${k}/${t}`?` = ${s}`:''}.`}}
+  const n=pick([60,90,120,150,180]);return{q:`Sebuah dadu dilempar ${n} kali. Frekuensi harapan muncul mata dadu 6 adalah ?`,opts:unit(numOpts(n/6,[n/2,n/3,6]),' kali'),expl:`Peluang muncul 6 = 1/6. Frekuensi harapan = 1/6 × ${n} = ${n/6} kali.`}}},
+{id:'k12_dimensi',g:12,name:'Jarak pada kubus',icon:'🧊',gen(){const s=R(2,12);
+  if(rnd()<.5)return{q:`Panjang diagonal sisi kubus dengan rusuk ${s} cm adalah ?`,opts:strOpts(`${s}√2 cm`,[`${s}√3 cm`,`${2*s} cm`,`${s} cm`]),expl:`Diagonal sisi adalah sisi miring segitiga siku-siku dengan kaki ${s} dan ${s}: √(${s}${sup(2)} + ${s}${sup(2)}) = √(2 × ${s*s}) = ${s}√2 cm.`};
+  return{q:`Panjang diagonal ruang kubus dengan rusuk ${s} cm adalah ?`,opts:strOpts(`${s}√3 cm`,[`${s}√2 cm`,`${3*s} cm`,`${s*s}√3 cm`]),expl:`Diagonal ruang = √(${s}${sup(2)} + ${s}${sup(2)} + ${s}${sup(2)}) = √(3 × ${s*s}) = ${s}√3 cm.`}}},
+{id:'k12_maks',g:12,name:'Nilai maksimum dengan turunan',icon:'⛰️',gen(){const h=nz(-4,6),k=R(5,30),b=2*h,c=k-h*h;
+  return{q:`Nilai maksimum f(x) = −x${sup(2)} ${pm(b)}x${c===0?'':' '+pm(c)} adalah ?`,opts:numOpts(k,[h,c,k+h],true),expl:`Nilai maksimum terjadi saat f'(x) = 0. f'(x) = −2x ${pm(b)} = 0, jadi x = ${sg(h)}. f(${sg(h)}) = −(${sg(h)})${sup(2)} ${pm(b)}(${sg(h)})${c===0?'':' '+pm(c)} = ${sg(k)}.`}}},
+{id:'k12_bunga',g:12,name:'Bunga majemuk',icon:'🏦',gen(){const M=pick([1,2,5,10])*1000000,p=pick([5,10,20]),n=R(2,3);let v=M;for(let i=0;i<n;i++)v=v*(100+p)/100;v=Math.round(v);const tunggal=M+M*p*n/100;
+  return{q:`Modal ${rp(M)} disimpan dengan bunga majemuk ${p}% per tahun. Setelah ${n} tahun, modal menjadi ?`,opts:numOpts(v,[tunggal,Math.round(v*(100+p)/100),M*(100+p)/100]).map(x=>'Rp'+x),
+  expl:`M<sub>n</sub> = M × (1 + i)${sup('n')} = ${rp(M)} × (${((100+p)/100).toLocaleString('id-ID')})${sup(n)} = ${rp(v)}. Berbeda dengan bunga tunggal (${rp(tunggal)}), bunga majemuk dihitung dari modal yang sudah bertambah setiap tahun.`}}},
+];
+
+// ---------- aktivasi (hanya berlaku di aplikasi Android) ----------
+const NEED_ACT=location.protocol==='file:';
+const _K=['jm','RCk5nTmN2jTX','wgwAZ9Pc18MP'].join('~');
+function h53(str,seed){let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0;i<str.length;i++){const ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677)}
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return 4294967296*(2097151&h2)+(h1>>>0)}
+function normId(s){s=String(s||'').trim().toLowerCase();if(!s.includes('@')){const d=s.replace(/\D/g,'');if(d.length>=8)return d.startsWith('0')?'62'+d.slice(1):d.startsWith('8')?'62'+d:d}return s.replace(/\s+/g,'')}
+function makeCode(id){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let n=h53(_K+'|'+normId(id),20261028),c='';for(let i=0;i<8;i++){c+=A[n%32];n=Math.floor(n/32)}return c.slice(0,4)+'-'+c.slice(4)}
+const normCode=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function isActive(){return !!(data.act&&normCode(makeCode(data.act.id))===normCode(data.act.code))}
+function activation(){
+  setColor();
+  app.innerHTML=`
+  <header class="top"><div class="brand">🧮 Jago Matematika</div></header>
+  <section class="hero">${fzHTML('waving')}<div class="bubble pop" id="say">Halo! Aku <b>Dokter Faiz</b>. Masukkan data dari pesan pembelianmu, ya.</div></section>
+  <div class="page act" id="actf" style="text-align:left">
+    <label for="aid">Email atau nomor WhatsApp</label>
+    <input id="aid" type="text" inputmode="email" autocomplete="email" placeholder="contoh: bunda@gmail.com">
+    <label for="acode">Kode aktivasi</label>
+    <input id="acode" type="text" autocapitalize="characters" autocomplete="off" placeholder="ABCD-EF23" maxlength="12">
+    <button class="mix" data-act="activate">Aktifkan</button>
+    <p class="small">Email atau nomor WhatsApp dan kodenya ada di pesan yang kamu terima setelah membeli.</p>
+  </div>`;
+  app.querySelectorAll('.act input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')tryActivate()}));
+}
+function tryActivate(){
+  const id=document.getElementById('aid').value,code=document.getElementById('acode').value;
+  if(normId(id).length>=5&&normCode(code).length===8&&normCode(makeCode(id))===normCode(code)){
+    data.act={id:id.trim(),code:makeCode(id)};save();
+    SFX.streak();confetti(90);setMood('happy');say('Aktivasi berhasil! Selamat datang di Jago Matematika!',.6);
+    setTimeout(home,1800);
+  }else{
+    SFX.wrong();setMood('sad');
+    say(!id.trim()||!code.trim()?'Isi dua-duanya dulu, ya.':'Kodenya belum cocok. Cek lagi email atau nomornya dan kodenya, ya.',.5);
+    const f=document.getElementById('actf');f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');
+  }
+}
+const TOPICS=[...T_LOW,...T_OLD,...T_HIGH];
+const LEVELS=[0,1,2,3,4,5,6,7,8,9,10,11,12];
+const LNAME=l=>l===0?'TK':`Kelas ${l}`;
+const JENJANG=[{id:'tk',name:'TK',levels:[0],c:'#D9467A'},{id:'sd',name:'SD',levels:[1,2,3,4,5,6],c:'#E07A10'},{id:'smp',name:'SMP',levels:[7,8,9],c:'#2A7FCC'},{id:'sma',name:'SMA',levels:[10,11,12],c:'#7A4FD8'}];
+const jOf=l=>JENJANG.find(j=>j.levels.includes(l))||JENJANG[1];
+const topikLevel=l=>TOPICS.filter(t=>t.g===l);
+const MODES={kuis:{name:'Kuis',icon:'📝',desc:'10 soal dengan pembahasan'},kilat:{name:'Kilat 60 detik',icon:'⚡',desc:'Jawab sebanyak mungkin'},bs:{name:'Benar atau Salah',icon:'✅',desc:'10 pernyataan cepat'},cocok:{name:'Cocokkan',icon:'🧩',desc:'Pasangkan soal dan jawaban'}};
+const AVATARS=['🦊','🐼','🐯','🐰','🐸','🦁','🐨','🐧','🦄','🐻'];
+const GOAL=50;
+const BADGES=[
+ {id:'mulai',icon:'🌱',name:'Langkah pertama',desc:'Selesaikan latihan pertama'},
+ {id:'sempurna',icon:'💯',name:'Sempurna',desc:'Kuis 10 dari 10'},
+ {id:'target',icon:'🎯',name:'Target tercapai',desc:'Capai target harian'},
+ {id:'hafal1',icon:'👑',name:'Hafal pertama',desc:'Hafal 1 topik'},
+ {id:'hafal10',icon:'🏰',name:'Raja hafalan',desc:'Hafal 10 topik'},
+ {id:'api3',icon:'🔥',name:'3 hari beruntun',desc:'Latihan 3 hari berturut-turut'},
+ {id:'api7',icon:'☄️',name:'Seminggu penuh',desc:'Latihan 7 hari berturut-turut'},
+ {id:'api30',icon:'🌋',name:'Sebulan penuh',desc:'Latihan 30 hari berturut-turut'},
+ {id:'xp1000',icon:'⭐',name:'1.000 XP',desc:'Kumpulkan 1.000 XP'},
+ {id:'kilat15',icon:'⚡',name:'Secepat kilat',desc:'15 benar di Kilat 60 detik'},
+ {id:'cocok',icon:'🧠',name:'Ingatan tajam',desc:'Cocokkan tanpa salah'},
+ {id:'menang',icon:'🏆',name:'Juara tantangan',desc:'Menang tantangan teman'}];
+
+// ---------- data & profil ----------
+const KEY='jagomat-v1';
+function baruProfil(name,av,level){return{id:'p'+Date.now().toString(36)+Math.floor(Math.random()*1e5).toString(36),name,av,level:level??3,xp:0,stats:{},days:{},streak:0,best:0,last:'',badges:[]}}
+let data=(()=>{let d=null;try{d=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+  if(d&&d.v===2&&Array.isArray(d.profiles)&&d.profiles.length)return d;
+  const p=baruProfil('Juara','🦊',d&&typeof d.grade==='number'?d.grade:3);
+  if(d){p.xp=d.points||0;for(const [id,s] of Object.entries(d.stats||{}))p.stats[id]={b:s.b||0,s:s.s||0,h:[]}}
+  return{v:2,profiles:[p],cur:p.id,mute:!!(d&&d.mute),act:d?d.act:undefined,baru:!d};
+})();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+const P=()=>data.profiles.find(p=>p.id===data.cur)||data.profiles[0];
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const today=()=>ymd(new Date());
+const yesterday=()=>{const d=new Date();d.setDate(d.getDate()-1);return ymd(d)};
+const weekStart=()=>{const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d)};
+const todayXP=p=>p.days[today()]||0;
+const weekXP=p=>{const ws=weekStart();return Object.entries(p.days).reduce((s,[k,v])=>k>=ws?s+v:s,0)};
+const streakNow=p=>(p.last===today()||p.last===yesterday())?p.streak:0;
+const lvl=xp=>Math.floor(Math.sqrt(xp/50))+1, lvlXP=L=>50*(L-1)*(L-1);
+function addXP(n){const p=P(),t=today();if(n<=0)return;p.xp+=n;p.days[t]=(p.days[t]||0)+n;
+  if(p.last!==t){p.streak=p.last===yesterday()?p.streak+1:1;p.last=t;p.best=Math.max(p.best||0,p.streak)}
+  const ks=Object.keys(p.days).sort();while(ks.length>70)delete p.days[ks.shift()]}
+const MNAME=['Belum dicoba','Sedang belajar','Hampir hafal','Hafal'];
+function catat(id,ok){const p=P(),st=p.stats[id]||(p.stats[id]={b:0,s:0,h:[]});if(!st.h)st.h=[];ok?st.b++:st.s++;st.h.push(ok?1:0);if(st.h.length>20)st.h.shift()}
+function hafal(id,p=P()){const st=p.stats[id];if(!st||st.b+st.s===0)return 0;const n=st.b+st.s,l=(st.h||[]).slice(-10),a=l.length?l.reduce((x,y)=>x+y,0)/l.length:st.b/n;
+  if(n>=15&&l.length>=10&&a>=.9)return 3;if(n>=8&&a>=.7)return 2;return 1}
+const mBar=m=>`<span class="mbar m${m}" aria-hidden="true"><i></i><i></i><i></i></span>`;
+function cekLencana(c){const p=P(),baru=[],beri=id=>{if(!p.badges.includes(id)){p.badges.push(id);baru.push(BADGES.find(b=>b.id===id))}};
+  beri('mulai');if(c.mode==='kuis'&&c.skor===10)beri('sempurna');if(todayXP(p)>=GOAL)beri('target');
+  const nh=TOPICS.filter(t=>hafal(t.id)===3).length;if(nh>=1)beri('hafal1');if(nh>=10)beri('hafal10');
+  const s=streakNow(p);if(s>=3)beri('api3');if(s>=7)beri('api7');if(s>=30)beri('api30');
+  if(p.xp>=1000)beri('xp1000');if(c.mode==='kilat'&&c.skor>=15)beri('kilat15');if(c.mode==='cocok'&&c.salah===0)beri('cocok');if(c.menang)beri('menang');
+  return baru}
+function setColor(l=P().level){document.documentElement.style.setProperty('--c',jOf(l).c)}
+
+// ---------- angka acak berbiji (untuk tantangan) ----------
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function denganSeed(seed,fn){const lama=rnd;rnd=mulberry(seed+12345);try{return fn()}finally{rnd=lama}}
+const C32='0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+const cek32=b=>C32[b.split('').reduce((a,c)=>a*7+C32.indexOf(c),3)%32];
+function kodeTantangan(seed,level,ti,skor){let n=((skor*32+ti)*16+level)*1048576+seed,s='';for(let i=0;i<7;i++){s=C32[n%32]+s;n=Math.floor(n/32)}return `JM-${s.slice(0,4)}-${s.slice(4)}${cek32(s)}`}
+function bacaKode(str){let s=String(str||'').toUpperCase().replace(/O/g,'0').replace(/[IL]/g,'1').replace(/[^0-9A-Z]/g,'');if(s.length===10&&s.startsWith('JM'))s=s.slice(2);if(s.length!==8)return null;
+  const body=s.slice(0,7);if([...body].some(c=>C32.indexOf(c)<0)||cek32(body)!==s[7])return null;let n=0;for(const c of body)n=n*32+C32.indexOf(c);
+  const seed=n%1048576;n=Math.floor(n/1048576);const level=n%16;n=Math.floor(n/16);const ti=n%32,skor=Math.floor(n/32);
+  if(level>12||skor>10)return null;if(ti!==31&&!topikLevel(level)[ti])return null;return{seed,level,ti,skor}}
+
+// ---------- pembuatan sesi ----------
+let S=null;const UI={};
+function pilihBerbobot(ts){const w=ts.map(t=>[1.6,2.4,1.4,.6][hafal(t.id)]);let r=rnd()*w.reduce((a,b)=>a+b,0);for(let i=0;i<ts.length;i++){r-=w[i];if(r<=0)return ts[i]}return ts[ts.length-1]}
+function buatGen(t){for(let i=0;i<8;i++){try{const g=t.gen();if(g&&g.opts&&g.opts.length>=2)return g}catch(e){}}return null}
+function buatSoal(t){const g=buatGen(t);if(!g)return null;const right=g.opts[0],opts=shuffle(g.opts.slice());return{t,g,opts,correct:opts.indexOf(right),label:g.label||t.label}}
+const RE_ISIAN=/^(Rp)?(−?\d[\d.]*(?:,\d+)?)( ?(?:cm²|cm³|cm|km\/jam|km|kg|g|m|jam|hari|kali|°|%))?$/;
+function targetIsian(a){const m=String(a).match(RE_ISIAN);return m?{nilai:m[2].replace(/\./g,''),depan:m[1]||'',belakang:(m[3]||'').trim()}:null}
+const teksPolos=s=>String(s).replace(/<[^>]+>/g,'');
+const cocokOK=g=>!g.visual&&g.q&&teksPolos(g.q).length<=26&&teksPolos(g.opts[0]).length<=16;
+const cacheCocok={};
+function bisaCocok(ts){const key=ts.map(t=>t.id).join(',');if(key in cacheCocok)return cacheCocok[key];const seen=new Set();for(let i=0;i<40&&seen.size<4;i++){const g=buatGen(pick(ts));if(g&&cocokOK(g))seen.add(g.opts[0])}return cacheCocok[key]=seen.size>=4}
+
+function mulai(mode,topicId,ext={}){
+  const level=ext.level??P().level,all=topikLevel(level),ts=topicId?[TOPICS.find(t=>t.id===topicId)]:all;
+  const berbiji=ext.seed!=null||!!topicId||!!ext.arena,seed=ext.seed??Math.floor(Math.random()*1048576);
+  const pilih=()=>ts.length===1?ts[0]:(berbiji?pick(ts):pilihBerbobot(ts));
+  S={mode,topicId,level,ti:topicId?all.findIndex(t=>t.id===topicId):31,seed,chal:ext.chal||null,arena:!!ext.arena,ts,i:0,skor:0,xp:0,combo:0,maxCombo:0,salah:0,wrongs:[],items:[],dijawab:false,
+     hafalAwal:Object.fromEntries(ts.map(t=>[t.id,hafal(t.id)])),bisaTantang:mode==='kuis'&&berbiji&&!ext.chal};
+  setColor(level);
+  const isi=()=>{
+    if(mode==='kuis'||mode==='bs'){for(let k=0;k<10;k++){const q=buatSoal(pilih());if(!q)continue;
+      if(mode==='kuis')q.isian=level>=2&&!!targetIsian(q.g.opts[0])&&rnd()<.35;
+      else{q.benar=rnd()<.5;q.cand=q.benar?q.g.opts[0]:q.g.opts[1+Math.floor(rnd()*(q.g.opts.length-1))]}
+      S.items.push(q)}}
+    else if(mode==='cocok'){const seen=new Set();for(let k=0;k<90&&S.items.length<5;k++){const t=pilih(),g=buatGen(t);if(!g||!cocokOK(g)||seen.has(g.opts[0]))continue;seen.add(g.opts[0]);S.items.push({t,g,opts:g.opts,correct:0,label:g.label||t.label})}}
+  };
+  berbiji?denganSeed(seed,isi):isi();
+  if(mode==='cocok'&&S.items.length<4){S.mode='kuis';S.items=[];return mulai('kuis',topicId,ext)}
+  if(mode==='kilat'){S.pilih=pilih;S.akhir=Date.now()+60000;kilatBerikut(true)}
+  else if(mode==='cocok')cocokTampil();else soalBerikut();
+}
+
+// ---------- tampilan sesi ----------
+function atasSesi(){const n=S.items.length||1,pct=S.mode==='kilat'?100:Math.round(S.i/n*100);
+  return `<div class="qtop"><button class="x" data-act="keluar" aria-label="Keluar">✕</button><div class="bar"><i id="bar" style="width:${pct}%"></i></div>${S.combo>=2&&S.mode!=='kilat'?`<span class="streak" id="cnt">🔥 ${S.combo}</span>`:`<span class="cnt" id="cnt">${S.mode==='kilat'?'60':S.mode==='cocok'?`0/${S.items.length}`:`${S.i+1}/${S.items.length}`}</span>`}</div>`}
+function soalBerikut(){
+  if(S.i>=S.items.length)return hasil();
+  const q=S.items[S.i];S.dijawab=false;S.ketik='';const txt=teksPolos(q.g.q);
+  app.innerHTML=`${atasSesi()}
+  <div class="coach">${fzHTML('sm')}<div class="bubble pop" id="say">${S.i===0?(S.chal?`Skor penantang ${S.chal.skor}/10. Kalahkan, ya!`:'Ayo mulai! Dokter Faiz temani, ya.'):S.mode==='bs'?'Benar atau salah, ya?':q.isian?'Ketik jawabanmu, ya.':pick(ASK)}</div></div>
+  <div class="page"><div class="label">${q.t.icon} ${q.label||q.t.name}</div>${q.g.q?`<div class="qtext ${txt.length>24?'long':''}">${fmt(q.g.q)}</div>`:''}${q.g.visual?`<div class="vis">${q.g.visual}</div>`:''}${S.mode==='bs'?`<div class="cand">Jawabannya: <b>${fmt(q.cand)}</b></div>`:''}</div>
+  ${S.mode==='bs'?`<div class="tf"><button class="opt tfb" data-act="bs" data-v="1">✅ Benar</button><button class="opt tfb" data-act="bs" data-v="0">❌ Salah</button></div>`
+   :q.isian?papanIsian(q):`<div class="opts">${q.opts.map((o,j)=>`<button class="opt" data-act="ans" data-i="${j}">${fmt(o)}</button>`).join('')}</div>`}
+  <div id="fb" aria-live="polite"></div>`;
+  window.scrollTo(0,0);SFX.babble(document.getElementById('say').textContent,.12);
+}
+function papanIsian(q){const t=targetIsian(q.g.opts[0]);
+  return `<div class="isian"><div class="layar" id="layar">${t.depan?`<span class="u">${t.depan}</span>`:''}<span id="ketik" class="ketik">&nbsp;</span>${t.belakang?`<span class="u">${t.belakang}</span>`:''}</div>
+  <div class="pad">${['1','2','3','⌫','4','5','6','−','7','8','9',','].map(k=>`<button class="key" data-act="key" data-k="${k}" aria-label="${k==='⌫'?'Hapus':k}">${k}</button>`).join('')}<button class="key nol" data-act="key" data-k="0">0</button><button class="key ok" data-act="periksa">Periksa</button></div></div>`}
+function tekan(k){if(S.dijawab)return;if(k==='⌫')S.ketik=S.ketik.slice(0,-1);else if(k==='−')S.ketik=S.ketik.startsWith('−')?S.ketik.slice(1):'−'+S.ketik;else if(S.ketik.length<12)S.ketik+=k;
+  document.getElementById('ketik').innerHTML=S.ketik||'&nbsp;';SFX.tap()}
+function periksa(){if(S.dijawab)return;const q=S.items[S.i],t=targetIsian(q.g.opts[0]);if(!S.ketik){say('Ketik jawabannya dulu, ya.',.1);return}
+  const norm=s=>s.replace(/\./g,'').replace(/−/g,'-').replace(/^-0$/,'0').replace(/,0+$/,'');jawab(norm(S.ketik)===norm(t.nilai),document.querySelector('.key.ok'),-1)}
+function jawab(ok,el,idx){
+  if(S.dijawab)return;S.dijawab=true;const q=S.items[S.i];catat(q.t.id,ok);let dapat=0;
+  if(ok){S.skor++;S.combo++;S.maxCombo=Math.max(S.maxCombo,S.combo);dapat=S.mode==='kuis'?(q.isian?15:10)+(S.combo>=3?5:0):5;S.xp+=dapat}
+  else{S.combo=0;S.wrongs.push(q)}
+  if(S.mode==='kuis'&&!q.isian)app.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;if(k===q.correct)b.classList.add('right');else if(k===idx)b.classList.add('wrong')});
+  if(S.mode==='bs')app.querySelectorAll('.tfb').forEach(b=>{b.disabled=true;if((b.dataset.v==='1')===q.benar)b.classList.add('right');else if(b===el)b.classList.add('wrong')});
+  if(q.isian){document.getElementById('layar').classList.add(ok?'right':'wrong');app.querySelectorAll('.key').forEach(b=>b.disabled=true)}
+  S.i++;document.getElementById('bar').style.width=Math.round(S.i/S.items.length*100)+'%';
+  const head=document.getElementById('cnt');
+  if(ok){if(el){const x=document.createElement('span');x.className='xp';x.textContent=`+${dapat} XP`;el.appendChild(x)}
+    setMood('happy');S.combo>=3?SFX.streak():SFX.right();say(S.combo>=3?`${S.combo} benar berturut-turut! 🔥`:pick(PRAISE));confetti(S.combo>=3?40:16);
+    if(S.combo>=2&&head){head.className='streak bump';head.textContent='🔥 '+S.combo}}
+  else{SFX.wrong();setMood('sad');say(pick(OOPS),.6);if(head){head.className='cnt';head.textContent=`${Math.min(S.i+1,S.items.length)}/${S.items.length}`}}
+  const kunci=fmt(q.g.opts[0]),after=q.g.after?`<div class="vis">${q.g.after}</div>`:'',lanjut=`<button class="next" data-act="lanjut">${S.i>=S.items.length?'Lihat hasil':'Lanjut'}</button>`;
+  const fb=document.getElementById('fb');
+  fb.innerHTML=ok?`<div class="fb good"><b>${pick(PRAISE)}</b>${S.mode==='bs'?`<div>Jawaban yang tepat: ${kunci}</div>`:''}<details><summary>Lihat pembahasan</summary><p class="note">${fmt(q.g.expl)}</p>${after}</details>${lanjut}</div>`
+    :`<div class="fb bad"><b>${S.mode==='bs'?`Pernyataan itu ${q.benar?'benar':'salah'}. Jawaban yang tepat: ${kunci}`:`Jawaban yang benar: ${kunci}`}</b><p class="note">${fmt(q.g.expl)}</p>${after}${lanjut}</div>`;
+  fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+// --- Kilat 60 detik ---
+function kilatBerikut(awal){
+  if(Date.now()>=S.akhir)return hasil();
+  const q=buatSoal(S.pilih());S.cur=q;S.dijawab=false;
+  if(awal){app.innerHTML=`${atasSesi()}<div class="kskor" id="kskor">⚡ Benar: 0</div><div class="page"><div class="label" id="klabel"></div><div id="kq"></div></div><div class="opts" id="kopts"></div>`;
+    S.timer=setInterval(()=>{const sisa=Math.max(0,S.akhir-Date.now()),b=document.getElementById('bar'),c=document.getElementById('cnt');if(!b||!S||S.mode!=='kilat'){clearInterval(S&&S.timer);return}
+      b.style.width=(sisa/600)+'%';c.textContent=Math.ceil(sisa/1000);if(sisa<=0){clearInterval(S.timer);hasil()}},200)}
+  const txt=teksPolos(q.g.q);
+  document.getElementById('klabel').innerHTML=`${q.t.icon} ${q.label||q.t.name}`;
+  document.getElementById('kq').innerHTML=`${q.g.q?`<div class="qtext ${txt.length>24?'long':''}">${fmt(q.g.q)}</div>`:''}${q.g.visual?`<div class="vis">${q.g.visual}</div>`:''}`;
+  document.getElementById('kopts').innerHTML=q.opts.map((o,j)=>`<button class="opt" data-act="kans" data-i="${j}">${fmt(o)}</button>`).join('');
+}
+function kilatJawab(j,el){if(S.dijawab)return;S.dijawab=true;const q=S.cur,ok=j===q.correct;catat(q.t.id,ok);
+  if(ok){S.skor++;S.xp+=5;SFX.right();el.classList.add('right');const x=document.createElement('span');x.className='xp';x.textContent='+5';el.appendChild(x)}
+  else{S.salah++;if(S.wrongs.length<8)S.wrongs.push(q);SFX.wrong();el.classList.add('wrong');const c=app.querySelectorAll('#kopts .opt')[q.correct];if(c)c.classList.add('right')}
+  document.getElementById('kskor').textContent=`⚡ Benar: ${S.skor}`;
+  setTimeout(()=>{if(S&&S.mode==='kilat'&&document.getElementById('kopts'))kilatBerikut(false)},ok?350:1000)}
+// --- Cocokkan ---
+function cocokTampil(){S.pilihKiri=null;S.selesai=new Set();const kiri=shuffle(S.items.map((_,i)=>i)),kanan=shuffle(S.items.map((_,i)=>i));
+  const soal=g=>fmt(g.q.replace(/\s*=?\s*\?\s*$/,''));
+  app.innerHTML=`${atasSesi()}<div class="coach">${fzHTML('sm')}<div class="bubble pop" id="say">Ketuk soal di kiri, lalu jawabannya di kanan!</div></div>
+  <div class="board"><div class="col">${kiri.map(i=>`<button class="tile" data-act="ckiri" data-i="${i}">${soal(S.items[i].g)}</button>`).join('')}</div>
+  <div class="col">${kanan.map(i=>`<button class="tile ans" data-act="ckanan" data-i="${i}">${fmt(S.items[i].g.opts[0])}</button>`).join('')}</div></div>`;
+  SFX.babble('Ketuk soal di kiri lalu jawabannya',.1)}
+function cocokPilih(sisi,i,el){if(S.selesai.has(sisi+i))return;
+  if(sisi==='k'){app.querySelectorAll('.tile[data-act="ckiri"]').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.pilihKiri=i;SFX.tap();return}
+  if(S.pilihKiri==null){say('Pilih soal di kiri dulu, ya.',.1);return}
+  const k=S.pilihKiri,ok=k===i,it=S.items[k],kiriEl=app.querySelector(`.tile[data-act="ckiri"][data-i="${k}"]`);catat(it.t.id,ok);
+  if(ok){S.selesai.add('k'+k);S.selesai.add('a'+i);kiriEl.classList.add('done');el.classList.add('done');S.skor++;S.xp+=5;SFX.right();setMood('happy');say(pick(PRAISE));
+    document.getElementById('bar').style.width=Math.round(S.skor/S.items.length*100)+'%';document.getElementById('cnt').textContent=`${S.skor}/${S.items.length}`;
+    if(S.skor>=S.items.length)setTimeout(()=>{if(S&&S.mode==='cocok')hasil()},800)}
+  else{S.salah++;if(!S.wrongs.includes(it))S.wrongs.push(it);el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),450);SFX.wrong();setMood('sad');say('Belum cocok. Coba lagi!',.3)}
+  S.pilihKiri=null;kiriEl.classList.remove('sel')}
+
+// ---------- hasil ----------
+function hasil(){
+  if(S.timer)clearInterval(S.timer);if(S.selesaiTampil)return;S.selesaiTampil=true;
+  const m=S.mode,n=S.items.length;
+  const bintang=m==='kilat'?(S.skor>=15?3:S.skor>=10?2:S.skor>=5?1:0):m==='cocok'?(S.salah===0?3:S.salah<=2?2:1):(S.skor>=9?3:S.skor>=7?2:S.skor>=4?1:0);
+  const rincian=[[m==='cocok'?`Pasangan cocok (${S.skor})`:`Jawaban benar (${S.skor})`,S.xp]];let bonus=0;
+  if((m==='kuis'||m==='bs')&&n&&S.skor===n){const b=m==='kuis'?20:10;bonus+=b;rincian.push(['Bonus sempurna',b])}
+  if(m==='cocok'&&S.salah===0){bonus+=15;rincian.push(['Bonus tanpa salah',15])}
+  let menang=false,seri=false;if(S.chal){menang=S.skor>S.chal.skor;seri=S.skor===S.chal.skor;if(menang){bonus+=20;rincian.push(['Menang tantangan',20])}}
+  const p=P(),awal=todayXP(p),total=S.xp+bonus;addXP(total);const goalBaru=awal<GOAL&&todayXP(p)>=GOAL;
+  const naik=S.ts.filter(t=>hafal(t.id)>S.hafalAwal[t.id]&&hafal(t.id)>=2).map(t=>[t,hafal(t.id)]);
+  const lencana=cekLencana({mode:m,skor:S.skor,salah:S.salah,menang});save();
+  const topik=S.topicId?TOPICS.find(t=>t.id===S.topicId):null;
+  const judul=m==='kilat'?`${S.skor} benar dalam 60 detik`:m==='cocok'?`${S.skor} pasangan, ${S.salah} kali salah`:`${S.skor} dari ${n} benar`;
+  S.ringkas={judul,bintang,xp:total,sub:`${MODES[m].name} • ${LNAME(S.level)}${topik?' • '+topik.name:''}`};
+  const pesan=bintang===3?'Luar biasa! Dokter Faiz bangga sekali! 🏆':bintang===2?'Bagus sekali! Sedikit lagi sempurna.':bintang===1?'Sudah lumayan. Ayo latihan lagi biar makin jago!':'Tidak apa-apa, semua orang belajar dari kesalahan. Coba lagi, ya!';
+  app.innerHTML=`<div class="res">${fzHTML('lg')}
+  <div class="stars" aria-label="${bintang} bintang">${[0,1,2].map(i=>`<span style="animation-delay:${.3+i*.25}s">${i<bintang?'⭐':'☆'}</span>`).join('')}</div>
+  <h1>${judul}</h1><p>${pesan}</p>
+  ${S.chal?`<div class="vsbox"><div><small>Kamu</small><b>${S.skor}</b></div><div class="vs">${menang?'🏆':seri?'🤝':'💪'}</div><div><small>Penantang</small><b>${S.chal.skor}</b></div></div><p><b>${menang?'Kamu menang tantangan!':seri?'Skor kalian seri!':'Penantang masih unggul. Coba lagi!'}</b></p>`:''}
+  <div class="xpbox"><div class="xpbig">+${total} XP</div><ul>${rincian.map(([a,b])=>`<li><span>${a}</span><b>+${b}</b></li>`).join('')}</ul>
+   <div class="goal" style="margin:10px 0 0"><span>🎯 Hari ini</span><div class="gbar"><i style="width:${Math.min(100,todayXP(p)/GOAL*100)}%"></i></div><b>${Math.min(todayXP(p),GOAL)}/${GOAL}</b></div></div>
+  ${goalBaru?`<div class="naik">🎯 Target harian tercapai! 🔥 ${streakNow(p)} hari beruntun.</div>`:''}
+  ${naik.map(([t,h])=>`<div class="naik">${h===3?'👑':'📈'} ${t.name}: <b>${MNAME[h]}</b>!</div>`).join('')}
+  ${lencana.map(b=>`<div class="badge-new"><span class="bi">${b.icon}</span><div><b>Lencana baru: ${b.name}</b><div class="small">${b.desc}</div></div></div>`).join('')}
+  <div class="btnrow"><button class="mix" data-act="bagikan">📤 Bagikan</button>${S.bisaTantang?`<button class="mix" data-act="tantang" style="--c:#7A4FD8">⚔️ Tantang teman</button>`:`<button class="mix" data-act="ulang">🔁 Main lagi</button>`}</div>
+  ${S.bisaTantang?`<button class="plain" data-act="ulang">🔁 Main lagi</button>`:''}
+  <button class="plain" data-act="menu">Kembali ke menu</button>
+  ${S.wrongs.length?`<h2>Pembahasan soal yang salah</h2>${S.wrongs.map(w=>`<div class="wcard"><div>${w.t.icon} ${w.label||w.t.name}</div>${w.g.q?`<div class="wq">${fmt(w.g.q)}</div>`:''}${w.g.visual?`<div class="vis">${w.g.visual}</div>`:''}<div>Jawaban: <b>${fmt(w.g.opts[0])}</b></div><p class="note">${fmt(w.g.expl)}</p></div>`).join('')}`:''}
+  </div>`;
+  window.scrollTo(0,0);
+  for(let i=0;i<bintang;i++)setTimeout(()=>SFX.star(i),300+i*250);setTimeout(()=>SFX.finish(bintang),300+bintang*250+150);
+  requestAnimationFrame(()=>{setMood(bintang>=2?'happy':bintang===0?'sad':null);if(bintang>=2||menang||goalBaru)confetti(90);else if(bintang===1)document.getElementById('fz').classList.add('waving')});
+}
+
+// ---------- berbagi ----------
+function rrect(x,X,Y,w,h,r,fill,stroke){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath();x.fillStyle=fill;x.fill();x.lineWidth=6;x.strokeStyle=stroke;x.stroke()}
+function kartuHasil(r){return new Promise(res=>{let done=false;const W=720,H=900,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d'),f='Fredoka, "Segoe UI", sans-serif';
+  const gambar=img=>{x.fillStyle='#FFE066';x.fillRect(0,0,W,H);x.strokeStyle='#F2D04E';x.lineWidth=2;for(let i=0;i<=W;i+=36){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke()}for(let j=0;j<=H;j+=36){x.beginPath();x.moveTo(0,j);x.lineTo(W,j);x.stroke()}
+    x.textAlign='left';x.fillStyle='#1F2A5A';x.font=`bold 46px ${f}`;x.fillText('Jago Matematika',48,96);x.font=`26px ${f}`;x.fillText('bersama Dokter Faiz',50,134);
+    if(img){try{x.drawImage(img,W-188,10,160,186)}catch(e){}}
+    rrect(x,48,200,W-96,600,36,'#FFFFFF','#1F2A5A');x.textAlign='center';
+    x.font='92px sans-serif';x.fillText(r.av,W/2,320);x.fillStyle='#1F2A5A';x.font=`bold 42px ${f}`;x.fillText(r.nama,W/2,386);
+    x.fillStyle='#55608A';x.font=`28px ${f}`;x.fillText(r.sub,W/2,430);x.fillStyle='#1F2A5A';x.font=`bold 40px ${f}`;x.fillText(r.judul,W/2,500);
+    x.font='60px sans-serif';x.fillText('⭐'.repeat(r.bintang)+'☆'.repeat(3-r.bintang),W/2,586);
+    x.fillStyle='#E8590C';x.font=`bold 56px ${f}`;x.fillText(`+${r.xp} XP`,W/2,672);
+    x.fillStyle='#1F2A5A';x.font=`30px ${f}`;x.fillText(`Level ${r.level}  •  🔥 ${r.streak} hari beruntun`,W/2,740);x.font=`26px ${f}`;x.fillText('Latihan matematika TK sampai SMA',W/2,856)};
+  const selesai=img=>{if(done)return;done=true;gambar(img);try{res(c.toDataURL('image/png'))}catch(e){if(img){gambar(null);try{res(c.toDataURL('image/png'))}catch(e2){res(null)}}else res(null)}};
+  try{const im=new Image();im.onload=()=>selesai(im);im.onerror=()=>selesai(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(MASCOT.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ').replace(/var\(--ink\)/g,'#1F2A5A'));setTimeout(()=>selesai(null),1500)}catch(e){selesai(null)}})}
+async function salin(t){try{await navigator.clipboard.writeText(t);return true}catch(e){try{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();const ok=document.execCommand('copy');a.remove();return ok}catch(e2){return false}}}
+function bagikan(teks,gambar){
+  try{if(window.JagoAndroid){if(gambar&&window.JagoAndroid.bagikanGambar){window.JagoAndroid.bagikanGambar(gambar.split(',')[1],teks);return}if(window.JagoAndroid.bagikanTeks){window.JagoAndroid.bagikanTeks(teks);return}}}catch(e){}
+  if(gambar&&navigator.canShare&&window.File){try{const bin=atob(gambar.split(',')[1]),arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);const fl=new File([arr],'jago-matematika.png',{type:'image/png'});
+    if(navigator.canShare({files:[fl]})){navigator.share({files:[fl],text:teks}).catch(()=>{});return}}catch(e){}}
+  if(!gambar&&navigator.share){navigator.share({text:teks}).catch(()=>sheetBagikan(teks,gambar));return}
+  sheetBagikan(teks,gambar)}
+function sheetBagikan(teks,gambar){UI.teksBagi=teks;sheet(`<h2>Bagikan</h2>${gambar?`<img class="modal-img" src="${gambar}" alt="Kartu hasil latihan"><p class="small">Tekan lama gambar untuk menyimpan atau membagikannya.</p>`:''}<textarea class="inp" readonly>${esc(teks)}</textarea><button class="mix" data-act="salinTeks">📋 Salin teks</button>`)}
+async function bagikanHasil(){const p=P(),r=S.ringkas;say('Sebentar, Dokter Faiz siapkan kartunya…',.1);
+  const img=await kartuHasil({av:p.av,nama:p.name,sub:r.sub,judul:r.judul,bintang:r.bintang,xp:r.xp,level:lvl(p.xp),streak:streakNow(p)});
+  bagikan(`${p.name} baru saja dapat ${r.judul} di Jago Matematika (${r.sub}) dan +${r.xp} XP! 🔥 ${streakNow(p)} hari beruntun. Ayo latihan matematika bareng Dokter Faiz! 🧮`,img)}
+function bagikanTantangan(){const p=P(),kode=kodeTantangan(S.seed,S.level,S.ti,S.skor),topik=S.topicId?TOPICS.find(t=>t.id===S.topicId):null;
+  bagikan(`⚔️ ${p.name} menantangmu di Jago Matematika!\nKuis ${LNAME(S.level)}${topik?' – '+topik.name:' – campuran'}: skor ${S.skor}/10.\nBerani kalahkan? Buka Jago Matematika → Arena → Terima tantangan, lalu masukkan kode:\n\n${kode}`,null)}
+
+// ---------- lembar bawah (sheet) ----------
+function sheet(html){tutup();const d=document.createElement('div');d.className='sheet-wrap';d.innerHTML=`<div class="sheet" role="dialog" aria-modal="true">${html}<button class="plain" data-act="tutup">Tutup</button></div>`;
+  d.addEventListener('click',e=>{if(e.target===d)tutup()});document.body.appendChild(d)}
+function tutup(){document.querySelectorAll('.sheet-wrap').forEach(x=>x.remove())}
+
+// ---------- layar utama ----------
+const nav=on=>`<nav class="nav">${[['belajar','📚','Belajar'],['arena','🎮','Arena'],['klasemen','🏆','Klasemen'],['saya','👤','Saya']].map(([k,i,n])=>`<button class="${k===on?'on':''}" data-act="tab" data-tab="${k}"><span>${i}</span>${n}</button>`).join('')}</nav>`;
+function atasUtama(p){const st=streakNow(p);return `<header class="top"><button class="prof" data-act="profil" aria-label="Ganti pemain"><span class="av">${p.av}</span><span class="pn">${esc(p.name)}</span></button>
+  <div class="hdr-r"><span class="chip fire ${st?'':'off'}" title="Hari beruntun">🔥 ${st}</span><span class="chip" title="XP">⭐ ${rb(p.xp)}</span><button class="snd" data-act="snd" aria-label="${data.mute?'Nyalakan suara':'Matikan suara'}">${data.mute?'🔇':'🔊'}</button></div></header>`}
+function salam(p){const tx=todayXP(p),st=streakNow(p);if(tx>=GOAL)return `Target hari ini sudah tercapai, <b>${esc(p.name)}</b>! Mau tambah lagi? 🌟`;
+  if(st>=2&&tx===0)return `🔥 ${st} hari beruntun! Latihan sedikit hari ini supaya apinya tidak padam.`;
+  return pick([`Halo, <b>${esc(p.name)}</b>! Mau latihan apa hari ini?`,`Semangat, <b>${esc(p.name)}</b>! Pilih topik, lalu pilih permainannya.`,'Resep Dokter Faiz: latihan 10 menit setiap hari biar otak makin kuat!'])}
+function home(){
+  if(NEED_ACT&&!isActive())return activation();
+  if(data.baru)return sambutan();
+  tutup();if(S&&S.timer)clearInterval(S.timer);S=null;const p=P(),L=p.level,j=jOf(L),ts=topikLevel(L),tx=todayXP(p);setColor(L);
+  app.innerHTML=`${atasUtama(p)}
+  <section class="hero">${fzHTML('waving')}<div class="bubble pop" id="say">${salam(p)}</div></section>
+  <div class="goal"><span>🎯 Target harian</span><div class="gbar"><i style="width:${Math.min(100,tx/GOAL*100)}%"></i></div><b>${Math.min(tx,GOAL)}/${GOAL} XP</b></div>
+  <div class="jtabs">${JENJANG.map(x=>`<button class="jt ${x===j?'on':''}" style="--jc:${x.c}" data-act="jenjang" data-j="${x.id}">${x.name}</button>`).join('')}</div>
+  ${j.levels.length>1?`<div class="ltabs"><span class="small">Kelas</span>${j.levels.map(l=>`<button class="lt ${l===L?'on':''}" data-act="level" data-l="${l}">${l}</button>`).join('')}</div>`:''}
+  <button class="mix" data-act="pilihMode" data-t="">🎲 Latihan campuran ${LNAME(L)}<small>Topik yang belum hafal lebih sering muncul</small></button>
+  <div class="grid">${ts.map(t=>{const m=hafal(t.id);return `<button class="tcard" data-act="pilihMode" data-t="${t.id}"><span class="ic">${t.icon}</span><b>${t.name}</b><span class="acc">${mBar(m)} ${MNAME[m]}</span></button>`}).join('')}</div>
+  ${nav('belajar')}`;
+  window.scrollTo(0,0);SFX.babble(document.getElementById('say').textContent,.1);
+}
+function pilihMode(tid){const t=tid?TOPICS.find(x=>x.id===tid):null,ts=t?[t]:topikLevel(P().level),bisa=bisaCocok(ts);
+  let info='';if(t){const st=P().stats[t.id],m=hafal(t.id),n=st?st.b+st.s:0;info=`<p class="small">${mBar(m)} ${MNAME[m]}${n?` • ${Math.round(st.b/n*100)}% benar dari ${n} soal`:''}</p>`}
+  sheet(`<h2>${t?`${t.icon} ${t.name}`:`🎲 Campuran ${LNAME(P().level)}`}</h2>${info}<div class="modes">${Object.entries(MODES).map(([k,v])=>k==='cocok'&&!bisa?'':`<button class="mode" data-act="main" data-m="${k}" data-t="${tid||''}"><span class="mi">${v.icon}</span><b>${v.name}</b><small>${v.desc}</small></button>`).join('')}</div>
+  <p class="small" style="margin-top:12px">Semua permainan menambah XP dan catatan hafalan. Topik dianggap <b>hafal</b> 👑 jika 9 dari 10 jawaban terakhir benar.</p>`)}
+function arena(){const p=P(),L=p.level;setColor(L);
+  app.innerHTML=`${atasUtama(p)}<h1>🎮 Arena</h1><p class="small">Permainan campuran ${LNAME(L)}. Ganti kelas di menu Belajar.</p>
+  <div class="modes">${['kilat','bs','cocok','kuis'].map(k=>k==='cocok'&&!bisaCocok(topikLevel(L))?'':`<button class="mode" data-act="main" data-m="${k}" data-t=""><span class="mi">${MODES[k].icon}</span><b>${MODES[k].name}</b><small>${MODES[k].desc}</small></button>`).join('')}</div>
+  <h2>⚔️ Tantang teman</h2>
+  <div class="card"><p style="margin:0 0 10px">Kerjakan 10 soal, lalu kirim kodenya ke teman. Temanmu akan mendapat <b>soal yang sama persis</b> dan berusaha mengalahkan skormu.</p>
+   <button class="mix" data-act="buatTantangan" style="--c:#7A4FD8">⚔️ Mulai tantangan ${LNAME(L)}</button>
+   <label class="lbl" for="kode">Punya kode dari teman?</label><div class="row"><input id="kode" class="inp" placeholder="JM-XXXX-XXXX" autocapitalize="characters" autocomplete="off" maxlength="14"><button class="go" data-act="terima">Main</button></div></div>
+  ${nav('arena')}`;window.scrollTo(0,0)}
+function terimaTantangan(){const el=document.getElementById('kode'),c=bacaKode(el&&el.value);if(!c){SFX.wrong();el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),450);toast('Kodenya tidak dikenali. Cek lagi, ya.');return}
+  const topik=c.ti===31?null:topikLevel(c.level)[c.ti];UI.chal=c;
+  sheet(`<h2>⚔️ Tantangan diterima!</h2><div class="card"><div><b>${LNAME(c.level)}</b> • ${topik?`${topik.icon} ${topik.name}`:'🎲 Campuran'}</div><div style="margin-top:6px">Skor penantang: <b>${c.skor}/10</b></div></div><p class="small">Kamu akan mengerjakan 10 soal yang sama persis dengan penantang. Kalau menang, dapat bonus 20 XP!</p><button class="mix" data-act="mulaiTantangan">Mulai sekarang</button>`)}
+function klasemen(){const p=P(),mode=UI.klas||'minggu',val=x=>mode==='minggu'?weekXP(x):x.xp,ps=data.profiles.slice().sort((a,b)=>val(b)-val(a));setColor(p.level);
+  app.innerHTML=`${atasUtama(p)}<h1>🏆 Klasemen keluarga</h1>
+  <div class="seg"><button class="${mode==='minggu'?'on':''}" data-act="klas" data-k="minggu">Minggu ini</button><button class="${mode==='semua'?'on':''}" data-act="klas" data-k="semua">Sepanjang waktu</button></div>
+  ${ps.map((x,i)=>`<div class="lb ${x.id===data.cur?'me':''}"><span class="rk">${['🥇','🥈','🥉'][i]||i+1}</span><span class="av">${x.av}</span><span class="nm">${esc(x.name)}<small>${LNAME(x.level)} • Level ${lvl(x.xp)} • 🔥 ${streakNow(x)}</small></span><span class="xv">${rb(val(x))} XP</span></div>`).join('')}
+  ${mode==='minggu'?'<p class="small">Klasemen mingguan dimulai lagi setiap Senin.</p>':''}
+  <button class="mix" data-act="formTambah">➕ Tambah anggota keluarga</button>
+  <div class="card"><b>Mau bertanding dengan teman di HP lain?</b><p class="small" style="margin:6px 0 10px">Di Arena, pilih Tantang teman. Kalian mengerjakan 10 soal yang sama persis, lalu bandingkan skornya.</p><button class="plain" data-act="tab" data-tab="arena" style="margin-top:0">Ke Arena</button></div>
+  ${nav('klasemen')}`;window.scrollTo(0,0)}
+function saya(){const p=P(),L=lvl(p.xp),a=lvlXP(L),b=lvlXP(L+1),nh=TOPICS.filter(t=>hafal(t.id)===3).length,lv=UI.lap??p.level;setColor(p.level);
+  app.innerHTML=`${atasUtama(p)}
+  <div class="prow"><div class="bigav">${p.av}</div><div style="flex:1"><h1 style="margin:0">${esc(p.name)}</h1><div class="small">${LNAME(p.level)} • Level ${L}</div><div class="lvlbar"><i style="width:${Math.round((p.xp-a)/(b-a)*100)}%"></i></div><div class="small">${rb(p.xp-a)} / ${rb(b-a)} XP menuju Level ${L+1}</div></div></div>
+  <div class="btnrow"><button class="plain" data-act="ubahProfil">✏️ Ubah profil</button><button class="plain" data-act="profil">👥 Ganti pemain</button></div>
+  <div class="stats"><div class="stat"><b>⭐ ${rb(p.xp)}</b><small>Total XP</small></div><div class="stat"><b>🔥 ${streakNow(p)}</b><small>Hari beruntun (rekor ${p.best||0})</small></div><div class="stat"><b>👑 ${nh}</b><small>Topik hafal</small></div><div class="stat"><b>🏅 ${p.badges.length}/${BADGES.length}</b><small>Lencana</small></div></div>
+  <h2>Lencana</h2><div class="badges">${BADGES.map(x=>`<div class="bdg ${p.badges.includes(x.id)?'':'off'}"><span class="bi">${x.icon}</span><b>${x.name}</b><div class="small">${x.desc}</div></div>`).join('')}</div>
+  <h2>🩺 Hasil pemeriksaan</h2><p class="small">Pilih kelas untuk melihat topik yang sudah hafal dan yang perlu didampingi.</p>
+  <div class="lvsel">${LEVELS.map(l=>`<button class="lt ${l===lv?'on':''}" data-act="lapLevel" data-l="${l}">${l===0?'TK':l}</button>`).join('')}</div>
+  ${topikLevel(lv).map(t=>{const st=p.stats[t.id],m=hafal(t.id,p),n=st?st.b+st.s:0,pct=n?Math.round(st.b/n*100):0,c=['nd','low','mid','ok'][m];
+    return `<div class="rrow"><div class="rname"><span>${t.icon} ${t.name}</span><small>${n?`${st.b} dari ${n} benar`:'Belum dicoba'}</small></div><div class="rline"><div class="rbar"><i class="${c}" style="width:${pct}%"></i></div><span class="badge ${c}">${MNAME[m]}</span></div></div>`}).join('')}
+  <button class="plain" data-act="hapusCatatan">Hapus catatan ${esc(p.name)}</button>
+  ${data.profiles.length>1?`<button class="plain" data-act="hapusProfil">Hapus pemain ${esc(p.name)}</button>`:''}
+  ${NEED_ACT&&data.act?`<p class="small owner">Terdaftar untuk: ${esc(data.act.id)}</p>`:''}
+  ${nav('saya')}`;window.scrollTo(0,0)}
+function bukaTab(t){UI.tab=t;tutup();({belajar:home,arena,klasemen,saya}[t]||home)()}
+
+// ---------- profil ----------
+function formProfil(judul,p,mode){UI.av=p?p.av:pick(AVATARS);UI.lv=p?p.level:3;
+  return `<h2>${judul}</h2><label class="lbl" for="nm">Nama panggilan</label><input id="nm" class="inp" maxlength="16" value="${p?esc(p.name):''}" placeholder="Contoh: Aisyah">
+  <div class="lbl">Pilih avatar</div><div class="avs">${AVATARS.map(a=>`<button class="avb ${a===UI.av?'on':''}" data-act="pilihAv" data-a="${a}">${a}</button>`).join('')}</div>
+  <div class="lbl">Kelas</div><div class="lvsel">${LEVELS.map(l=>`<button class="lt ${l===UI.lv?'on':''}" data-act="pilihLv" data-l="${l}">${l===0?'TK':l}</button>`).join('')}</div>
+  <button class="mix" data-act="simpanProfil" data-mode="${mode}">${mode==='awal'?'Mulai belajar':'Simpan'}</button>`}
+function sambutan(){setColor(3);app.innerHTML=`<section class="hero">${fzHTML('waving')}<div class="bubble pop" id="say">Halo! Aku <b>Dokter Faiz</b>. Kenalan dulu, yuk!</div></section><div class="card">${formProfil('Siapa kamu?',null,'awal')}</div>`}
+function sheetProfil(){sheet(`<h2>👥 Pilih pemain</h2>${data.profiles.map(x=>`<button class="lb ${x.id===data.cur?'me':''}" data-act="pakaiProfil" data-id="${x.id}" style="width:100%;text-align:left"><span class="av">${x.av}</span><span class="nm">${esc(x.name)}<small>${LNAME(x.level)} • Level ${lvl(x.xp)}</small></span><span class="xv">⭐ ${rb(x.xp)}</span></button>`).join('')}<button class="mix" data-act="formTambah">➕ Tambah anggota keluarga</button>`)}
+function simpanProfil(mode){const nm=(document.getElementById('nm').value||'').trim().slice(0,16);if(!nm){toast('Isi namanya dulu, ya.');document.getElementById('nm').focus();return}
+  if(mode==='tambah'){if(data.profiles.length>=8){toast('Maksimal 8 pemain.');return}const p=baruProfil(nm,UI.av,UI.lv);data.profiles.push(p);data.cur=p.id}
+  else{const p=mode==='awal'?data.profiles[0]:P();p.name=nm;p.av=UI.av;p.level=UI.lv;data.baru=false}
+  save();tutup();SFX.right();bukaTab(mode==='ubah'?'saya':'belajar')}
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
+
+// ---------- tombol ----------
+document.addEventListener('click',e=>{
+  if(e.target.closest('#fz')&&!e.target.closest('[data-act]')){SFX.giggle();setMood('happy');say(pick(['Hehe, geli! 😆','Halo! Semangat belajarnya, ya!','Dokter Faiz siap membantu!']));return}
+  const el=e.target.closest('[data-act]');if(!el)return;const a=el.dataset.act,d=el.dataset;
+  if(!['ans','bs','key','periksa','kans','ckiri','ckanan','snd'].includes(a))SFX.tap();
+  switch(a){
+    case 'activate':tryActivate();break;
+    case 'snd':data.mute=!data.mute;save();el.textContent=data.mute?'🔇':'🔊';if(!data.mute)SFX.right();break;
+    case 'tab':bukaTab(d.tab);break;
+    case 'jenjang':{const j=JENJANG.find(x=>x.id===d.j),p=P();if(!j.levels.includes(p.level))p.level=j.id==='sd'?3:j.levels[0];save();home();break}
+    case 'level':P().level=+d.l;save();home();break;
+    case 'pilihMode':pilihMode(d.t);break;
+    case 'main':tutup();mulai(d.m,d.t||null);break;
+    case 'tutup':tutup();break;
+    case 'keluar':if(S&&S.timer)clearInterval(S.timer);S=null;home();break;
+    case 'ans':if(S&&!S.dijawab&&S.items[S.i])jawab(+d.i===S.items[S.i].correct,el,+d.i);break;
+    case 'bs':if(S&&!S.dijawab&&S.items[S.i])jawab((d.v==='1')===S.items[S.i].benar,el,-1);break;
+    case 'key':if(S)tekan(d.k);break;
+    case 'periksa':periksa();break;
+    case 'lanjut':if(S)soalBerikut();break;
+    case 'kans':if(S&&S.cur)kilatJawab(+d.i,el);break;
+    case 'ckiri':cocokPilih('k',+d.i,el);break;
+    case 'ckanan':cocokPilih('a',+d.i,el);break;
+    case 'ulang':{const s=S;mulai(s.mode,s.topicId,{level:s.level,arena:s.arena});break}
+    case 'menu':home();break;
+    case 'bagikan':bagikanHasil();break;
+    case 'tantang':bagikanTantangan();break;
+    case 'salinTeks':salin(UI.teksBagi||'').then(ok=>toast(ok?'Teks disalin':'Gagal menyalin'));break;
+    case 'buatTantangan':mulai('kuis',null,{arena:true});break;
+    case 'terima':terimaTantangan();break;
+    case 'mulaiTantangan':{const c=UI.chal;tutup();const topik=c.ti===31?null:topikLevel(c.level)[c.ti];mulai('kuis',topik?topik.id:null,{seed:c.seed,level:c.level,chal:{skor:c.skor}});break}
+    case 'klas':UI.klas=d.k;klasemen();break;
+    case 'profil':sheetProfil();break;
+    case 'pakaiProfil':data.cur=d.id;save();tutup();bukaTab(UI.tab||'belajar');break;
+    case 'formTambah':sheet(formProfil('➕ Tambah anggota',null,'tambah'));break;
+    case 'ubahProfil':sheet(formProfil('✏️ Ubah profil',P(),'ubah'));break;
+    case 'pilihAv':UI.av=d.a;el.parentElement.querySelectorAll('.avb').forEach(b=>b.classList.toggle('on',b===el));break;
+    case 'pilihLv':UI.lv=+d.l;el.parentElement.querySelectorAll('.lt').forEach(b=>b.classList.toggle('on',b===el));break;
+    case 'simpanProfil':simpanProfil(d.mode);break;
+    case 'lapLevel':UI.lap=+d.l;saya();break;
+    case 'hapusCatatan':if(confirm(`Hapus semua catatan, XP, dan lencana ${P().name}?`)){const p=P();Object.assign(p,{xp:0,stats:{},days:{},streak:0,best:0,last:'',badges:[]});save();saya()}break;
+    case 'hapusProfil':if(data.profiles.length>1&&confirm(`Hapus pemain ${P().name} beserta semua catatannya?`)){data.profiles=data.profiles.filter(x=>x.id!==data.cur);data.cur=data.profiles[0].id;save();bukaTab('belajar')}break;
+  }
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='kode')terimaTantangan();
+  if(S&&S.mode==='kuis'&&S.items[S.i]&&S.items[S.i].isian&&!S.dijawab&&!e.target.closest('input,textarea')){if(/^[0-9]$/.test(e.key))tekan(e.key);else if(e.key===',')tekan(',');else if(e.key==='-')tekan('−');else if(e.key==='Backspace')tekan('⌫');else if(e.key==='Enter')periksa()}});
+const app=document.getElementById('app');
+home();
+
+</script>
+</body>
+</html>
