@@ -829,27 +829,129 @@ function normId(s){s=String(s||'').trim().toLowerCase();if(!s.includes('@')){con
 function makeCode(id){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let n=h53(_K+'|'+normId(id),20261028),c='';for(let i=0;i<8;i++){c+=A[n%32];n=Math.floor(n/32)}return c.slice(0,4)+'-'+c.slice(4)}
 const normCode=s=>String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function isActive(){return !!(data.act&&normCode(makeCode(data.act.id))===normCode(data.act.code))}
+/* ===== LISENSI v2 (dipasang dari ~/Documents/Aplikasi/aktivasi/lisensi-h53-v2.tpl.js) =====
+   Kode v2 (sejak 12 Nov 2026): 3 huruf hari dibuat + 7 huruf HMAC-SHA256(_K, "JAGOMATEMATIKA|v2|hari|id"), XXXXX-XXXXX.
+   Berlaku 365 hari sejak dibuat (hari 0 = 1 Jan 2026). Kode lama 8 huruf (makeCode) tetap berlaku tanpa batas waktu.
+   LIS2.periksa(id, kode) → null | {selamanya, akhir};  LIS2.status(act) → {aktif, selamanya, habis, sampai, sisaHari} */
+const LIS2 = (function () {
+  'use strict';
+  var APP = 'JAGOMATEMATIKA', ALFA = '0123456789ABCDEFGHJKMNPQRSTVWXYZ', MASA = 365, EPOCH = Date.UTC(2026, 0, 1), HARI_MS = 86400000, SIMPAN = 'jm-lisensi-hari';
+  const sha256 = (() => {
+    const K = [], H0 = [];
+    let n = 2, c = 0;
+    const frac = x => ((x - Math.floor(x)) * 4294967296) >>> 0;
+    while (c < 64) {
+      let prime = true;
+      for (let d = 2; d * d <= n; d++) if (n % d === 0) { prime = false; break; }
+      if (prime) { if (c < 8) H0[c] = frac(Math.pow(n, 1 / 2)); K[c] = frac(Math.pow(n, 1 / 3)); c++; }
+      n++;
+    }
+    const rotr = (x, r) => (x >>> r) | (x << (32 - r));
+    return bytes => {
+      const l = bytes.length, bitLen = l * 8;
+      const total = ((l + 9 + 63) >> 6) << 6;
+      const m = new Uint8Array(total); m.set(bytes); m[l] = 0x80;
+      const dv = new DataView(m.buffer);
+      dv.setUint32(total - 4, bitLen >>> 0); dv.setUint32(total - 8, Math.floor(bitLen / 4294967296));
+      const h = H0.slice(), w = new Array(64);
+      for (let off = 0; off < total; off += 64) {
+        for (let i = 0; i < 16; i++) w[i] = dv.getUint32(off + i * 4);
+        for (let i = 16; i < 64; i++) {
+          const s0 = rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+          const s1 = rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+          w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+        }
+        let [a, b, cc, d, e, f, g, hh] = h;
+        for (let i = 0; i < 64; i++) {
+          const S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25), ch = (e & f) ^ (~e & g);
+          const t1 = (hh + S1 + ch + K[i] + w[i]) >>> 0;
+          const S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22), maj = (a & b) ^ (a & cc) ^ (b & cc);
+          const t2 = (S0 + maj) >>> 0;
+          hh = g; g = f; f = e; e = (d + t1) >>> 0; d = cc; cc = b; b = a; a = (t1 + t2) >>> 0;
+        }
+        h[0] = (h[0] + a) >>> 0; h[1] = (h[1] + b) >>> 0; h[2] = (h[2] + cc) >>> 0; h[3] = (h[3] + d) >>> 0;
+        h[4] = (h[4] + e) >>> 0; h[5] = (h[5] + f) >>> 0; h[6] = (h[6] + g) >>> 0; h[7] = (h[7] + hh) >>> 0;
+      }
+      const out = new Uint8Array(32), odv = new DataView(out.buffer);
+      h.forEach((v, i) => odv.setUint32(i * 4, v));
+      return out;
+    };
+  })();
+  function hmac(key, msg) {
+    const k = new Uint8Array(64); k.set(key.length > 64 ? sha256(key) : key);
+    const ip = new Uint8Array(64 + msg.length), op = new Uint8Array(64 + 32);
+    for (let i = 0; i < 64; i++) { ip[i] = k[i] ^ 0x36; op[i] = k[i] ^ 0x5c; }
+    ip.set(msg, 64); op.set(sha256(ip), 64);
+    return sha256(op);
+  }
+  
+  function nk(s) { return String(s || '').toUpperCase().replace(/O/g, '0').replace(/[IL]/g, '1').replace(/[^0-9A-Z]/g, ''); }
+  function b32(mac, n) {
+    var bits = 0, val = 0, out = '';
+    for (var i = 0; i < mac.length && out.length < n; i++) {
+      val = ((val << 8) | mac[i]) & 0xffff; bits += 8;
+      while (bits >= 5 && out.length < n) { out += ALFA[(val >>> (bits - 5)) & 31]; bits -= 5; }
+    }
+    return out;
+  }
+  function kode2(id, hari) {
+    var tgl = ALFA[(hari >> 10) & 31] + ALFA[(hari >> 5) & 31] + ALFA[hari & 31];
+    var enc = new TextEncoder();
+    var out = tgl + b32(hmac(enc.encode(_K), enc.encode(APP + '|v2|' + hari + '|' + normId(id))), 7);
+    return out.slice(0, 5) + '-' + out.slice(5, 10);
+  }
+  function periksa(id, kode) {
+    if (normId(id).length < 5) return null;
+    var c = normCode(kode);
+    if (c.length === 8) return normCode(makeCode(id)) === c ? { selamanya: true, akhir: 0 } : null;
+    var k = nk(kode);
+    if (k.length !== 10) return null;
+    var hari = 0;
+    for (var i = 0; i < 3; i++) { var q = ALFA.indexOf(k.charAt(i)); if (q < 0) return null; hari = hari * 32 + q; }
+    return k === nk(kode2(id, hari)) ? { selamanya: false, akhir: hari + MASA } : null;
+  }
+  function tanggal(h) { return new Date(EPOCH + h * HARI_MS).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }); }
+  function hariIni() {
+    var d = new Date(), h = Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - EPOCH) / HARI_MS), lalu = 0;
+    try { lalu = parseInt(localStorage.getItem(SIMPAN) || '0', 10) || 0; } catch (e) { }
+    if (h > lalu) { try { localStorage.setItem(SIMPAN, String(h)); } catch (e) { } return h; }
+    return lalu;
+  }
+  function status(act) {
+    var r = { aktif: false, selamanya: false, habis: false, sampai: '', sisaHari: 0 };
+    var p = act ? periksa(act.id, act.code) : null;
+    if (p && p.selamanya) { r.aktif = r.selamanya = true; }
+    else if (p) { r.sampai = tanggal(p.akhir); r.sisaHari = p.akhir - hariIni(); r.aktif = r.sisaHari >= 0; r.habis = !r.aktif; }
+    return r;
+  }
+  return { kode2: kode2, periksa: periksa, tanggal: tanggal, hariIni: hariIni, status: status, nk: nk };
+})();
+function isActive(){return LIS2.status(data.act).aktif}
 function activation(){
   setColor();
+  const habis=LIS2.status(data.act).habis;
   app.innerHTML=`
   <header class="top"><div class="brand">🧮 Jago Matematika</div></header>
-  <section class="hero">${fzHTML('waving')}<div class="bubble pop" id="say">Halo! Aku <b>Dokter Faiz</b>. Masukkan data dari pesan pembelianmu, ya.</div></section>
+  <section class="hero">${fzHTML('waving')}<div class="bubble pop" id="say">${habis?`Lisensimu berakhir pada <b>${LIS2.status(data.act).sampai}</b>. Masukkan kode perpanjangan, ya. Progres belajarmu tetap aman.`:'Halo! Aku <b>Dokter Faiz</b>. Masukkan data dari pesan pembelianmu, ya.'}</div></section>
   <div class="page act" id="actf" style="text-align:left">
     <label for="aid">Email atau nomor WhatsApp</label>
-    <input id="aid" type="text" inputmode="email" autocomplete="email" placeholder="contoh: bunda@gmail.com">
+    <input id="aid" type="text" inputmode="email" autocomplete="email" placeholder="contoh: bunda@gmail.com" value="${habis?esc(data.act.id):''}">
     <label for="acode">Kode aktivasi</label>
-    <input id="acode" type="text" autocapitalize="characters" autocomplete="off" placeholder="ABCD-EF23" maxlength="12">
-    <button class="mix" data-act="activate">Aktifkan</button>
-    <p class="small">Email atau nomor WhatsApp dan kodenya ada di pesan yang kamu terima setelah membeli.</p>
+    <input id="acode" type="text" autocapitalize="characters" autocomplete="off" placeholder="XXXXX-XXXXX" maxlength="14">
+    <button class="mix" data-act="activate">${habis?'Perpanjang':'Aktifkan'}</button>
+    <p class="small">Email atau nomor WhatsApp dan kodenya ada di pesan yang kamu terima setelah membeli. Satu kode berlaku 1 tahun sejak dibuat.</p>
   </div>`;
   app.querySelectorAll('.act input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')tryActivate()}));
 }
 function tryActivate(){
   const id=document.getElementById('aid').value,code=document.getElementById('acode').value;
-  if(normId(id).length>=5&&normCode(code).length===8&&normCode(makeCode(id))===normCode(code)){
-    data.act={id:id.trim(),code:makeCode(id)};save();
-    SFX.streak();confetti(90);setMood('happy');say('Aktivasi berhasil! Selamat datang di Jago Matematika!',.6);
+  const p=LIS2.periksa(id,code);
+  if(p&&!p.selamanya&&p.akhir<LIS2.hariIni()){
+    SFX.wrong();setMood('sad');say(`Kode ini sudah berakhir pada ${LIS2.tanggal(p.akhir)}. Minta kode perpanjangan, ya.`,.5);
+    const f=document.getElementById('actf');f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');
+  }else if(p){
+    data.act={id:id.trim(),code:p.selamanya?makeCode(id):LIS2.nk(code)};save();
+    SFX.streak();confetti(90);setMood('happy');say(p.selamanya?'Aktivasi berhasil! Selamat datang di Jago Matematika!':`Aktivasi berhasil! Berlaku sampai ${LIS2.tanggal(p.akhir)}.`,.6);
     setTimeout(home,1800);
   }else{
     SFX.wrong();setMood('sad');
