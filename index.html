@@ -951,6 +951,7 @@ const AKUN=(()=>{
     return false}
   return{ada,minta,_jawab,status,simpan,segarkan};
 })();
+window.AKUN=AKUN; // dipanggil Akun.java / jagoakun-web.js lewat window.AKUN
 function statusLisensi(){const a=AKUN.status();if(a&&a.aktif)return a;const k=LIS2.status(data.act);return k.aktif||!a?k:a}
 function isActive(){return statusLisensi().aktif}
 const kepalaAkt=bubble=>`<header class="top"><div class="brand">🧮 Jago Matematika</div></header>
