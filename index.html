@@ -926,9 +926,89 @@ const LIS2 = (function () {
   }
   return { kode2: kode2, periksa: periksa, tanggal: tanggal, hariIni: hariIni, status: status, nk: nk };
 })();
-function isActive(){return LIS2.status(data.act).aktif}
+/* ===== AKUN drfaiz.id (23 Nov 2026) =====
+   Masuk dengan email + kode email → server drfaiz.id memberi token lisensi bertanda tangan (ECDSA) yang diperiksa APK
+   (window.JagoAkun, Akun.java) dan berlaku offline sampai tanggal 'sampai'. Pembelian di Toko Digital tercatat ke akun
+   (email pembeli). APK lama tanpa JagoAkun tetap memakai kode aktivasi (LIS2), yang juga masih diterima sebagai cadangan. */
+const AKUN=(()=>{
+  const ada=()=>!!(window.JagoAkun&&window.JagoAkun.periksa);
+  const tunggu={};let n=0,cache=null;
+  function minta(jalur,isi){return new Promise(res=>{const id='a'+(++n);tunggu[id]=res;
+    try{JagoAkun.minta(id,jalur,JSON.stringify(Object.assign({app:'JAGOMATEMATIKA'},isi)))}catch(e){delete tunggu[id];res({status:0,isi:{}})}})}
+  function _jawab(id,status,teks){const r=tunggu[id];delete tunggu[id];let j={};try{j=JSON.parse(teks)||{}}catch(e){}if(r)r({status,isi:j})}
+  function hariDari(s){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||'');return m?Math.round((Date.UTC(+m[1],m[2]-1,+m[3])-Date.UTC(2026,0,1))/864e5):-1}
+  function lisensi(){const a=data.akun;if(!ada()||!a||!a.token)return null;
+    if(cache&&cache.token===a.token)return cache.p;let p=null;
+    try{const t=JagoAkun.periksa(a.token);if(t){const j=JSON.parse(t);if(j.app==='JAGOMATEMATIKA')p={email:j.email,hari:hariDari(j.sampai)}}}catch(e){}
+    cache={token:a.token,p};return p}
+  function status(){const p=lisensi();if(!p)return null;const sisa=p.hari-LIS2.hariIni();return{aktif:sisa>=0,habis:sisa<0,selamanya:false,sampai:LIS2.tanggal(p.hari),sisaHari:sisa,email:p.email}}
+  function simpan(isi){const a=data.akun=data.akun||{};if(isi.email)a.email=isi.email;if(isi.sesi)a.sesi=isi.sesi;if(isi.beli)a.beli=isi.beli;
+    a.token=isi.lisensi&&isi.lisensi.token||'';save();cache=null}
+  async function segarkan(){const a=data.akun;if(!ada()||!a||!a.sesi)return false;
+    const r=await minta('lisensi',{sesi:a.sesi});
+    if(r.status===200&&r.isi.ok){simpan(r.isi);return true}
+    if(r.status===401){a.sesi='';save()} // sesi dicabut; token yang ada tetap berlaku sampai habis
+    return false}
+  return{ada,minta,_jawab,status,simpan,segarkan};
+})();
+function statusLisensi(){const a=AKUN.status();if(a&&a.aktif)return a;const k=LIS2.status(data.act);return k.aktif||!a?k:a}
+function isActive(){return statusLisensi().aktif}
+const kepalaAkt=bubble=>`<header class="top"><div class="brand">🧮 Jago Matematika</div></header>
+  <section class="hero">${fzHTML('waving')}<div class="bubble pop" id="say">${bubble}</div></section>`;
 function activation(){
   setColor();
+  if(!AKUN.ada()||UI.pakaiKode)return activationKode();
+  const st=statusLisensi(),a=data.akun||{},L=UI.ak||(a.sesi?'beli':'email');
+  const bubble=L==='kode'?`Kode 6 angka sudah dikirim ke <b>${esc(UI.akEmail)}</b>. Cek juga folder Spam, ya.`
+    :st.habis?`Lisensimu berakhir pada <b>${st.sampai}</b>. Perpanjang lewat akunmu, ya. Progres belajarmu tetap aman.`
+    :L==='email'?'Halo! Aku <b>Dokter Faiz</b>. Masuk dulu dengan email akun drfaiz.id, ya. Belum punya akun? Langsung dibuatkan.'
+    :`Akun <b>${esc(a.email||'')}</b> belum punya lisensi Jago Matematika.`;
+  const isi=L==='email'?`<label for="aemail">Email</label>
+    <input id="aemail" type="email" inputmode="email" autocomplete="email" placeholder="contoh: bunda@gmail.com" value="${esc(UI.akEmail||a.email||'')}">
+    <button class="mix" data-act="akKirim">Kirim kode masuk</button>
+    <p class="small">Pakai email yang sama dengan saat membeli. Kode masuk dikirim ke email itu, jadi tidak perlu kata sandi.</p>`
+   :L==='kode'?`<label for="akode">Kode dari email</label>
+    <input id="akode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6 angka">
+    <button class="mix" data-act="akMasuk">Masuk</button>
+    <button class="plain" data-act="akGanti">Ganti email atau kirim ulang kode</button>`
+   :`<button class="mix" data-act="akBeli">🛒 ${st.habis?'Perpanjang':'Beli'} lisensi 1 tahun</button>
+    <button class="plain" data-act="akCek">Saya sudah membeli, periksa lagi</button>
+    <button class="plain" data-act="akKeluar">Masuk dengan email lain</button>
+    <p class="small">Saat membeli, pakai email <b>${esc(a.email||'')}</b> supaya lisensinya langsung masuk ke akun ini.</p>`;
+  app.innerHTML=`${kepalaAkt(bubble)}<div class="page act" id="actf" style="text-align:left">${isi}
+    <button class="plain" data-act="akPakaiKode" style="border:0">Punya kode aktivasi?</button></div>`;
+  app.querySelectorAll('.act input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')(L==='email'?akKirim:akMasuk)()}));
+}
+function goyang(){const f=document.getElementById('actf');if(f){f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake')}}
+function sibuk(on){app.querySelectorAll('.act button').forEach(b=>b.disabled=on)}
+function gagalAkun(r){SFX.wrong();setMood('sad');say(r.status===0?'Belum tersambung ke internet. Nyalakan data atau Wi-Fi, lalu coba lagi, ya.':esc(r.isi.pesan||'Ada gangguan di server. Coba lagi sebentar lagi, ya.'));goyang()}
+async function akKirim(){const e=(document.getElementById('aemail').value||'').trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){SFX.wrong();say('Email-nya belum benar, ya.');goyang();return}
+  sibuk(true);say('Sebentar, kodenya sedang dikirim…');
+  const r=await AKUN.minta('kode',{email:e});sibuk(false);
+  if(r.status===200&&r.isi.ok){UI.ak='kode';UI.akEmail=e;activation();setTimeout(()=>{const k=document.getElementById('akode');if(k)k.focus()},300)}
+  else gagalAkun(r)}
+async function akMasuk(){const k=(document.getElementById('akode').value||'').replace(/\D/g,'');
+  if(k.length!==6){SFX.wrong();say('Kodenya 6 angka, ya.');goyang();return}
+  sibuk(true);let pr='';try{pr=JagoAkun.perangkat()}catch(e){}
+  const r=await AKUN.minta('masuk',{email:UI.akEmail,kode:k,perangkat:pr});sibuk(false);
+  if(r.status===200&&r.isi.ok){AKUN.simpan(r.isi);UI.ak=null;selesaiMasuk()}else gagalAkun(r)}
+function selesaiMasuk(){const st=AKUN.status();
+  if(st&&st.aktif){SFX.streak();confetti(90);setMood('happy');say(`Berhasil! Lisensimu berlaku sampai <b>${st.sampai}</b>.`,.6);setTimeout(home,1800)}
+  else{UI.ak='beli';activation()}}
+async function akCek(){const a=data.akun||{};if(!a.sesi){UI.ak='email';activation();return}
+  sibuk(true);say('Sebentar, sedang memeriksa…');const ok=await AKUN.segarkan();sibuk(false);
+  if(!data.akun.sesi){UI.ak='email';activation();say('Silakan masuk lagi dengan email, ya.');return}
+  const st=AKUN.status();if(st&&st.aktif)return selesaiMasuk();
+  SFX.wrong();setMood('sad');say(ok?'Lisensinya belum masuk. Kalau baru saja bayar, tunggu sebentar lalu periksa lagi. Pastikan emailnya sama, ya.':'Belum tersambung ke internet. Coba lagi, ya.')}
+function akBeli(){const a=data.akun||{};try{JagoAkun.buka(a.beli||'https://www.drfaiz.id/aplikasi/jago-matematika/')}catch(e){}}
+function akKeluar(){const a=data.akun;if(a&&a.sesi)AKUN.minta('keluar',{sesi:a.sesi});data.akun={email:a&&a.email};save();UI.ak='email';UI.akEmail='';UI.pakaiKode=false;activation()}
+function infoLisensi(){const a=AKUN.status();
+  if(a&&a.aktif)return `<div class="card"><b>Akun drfaiz.id</b><p class="small" style="margin:6px 0">${esc(a.email)}<br>Lisensi berlaku sampai ${a.sampai}${a.sisaHari<=30?` (sisa ${a.sisaHari} hari)`:''}</p>
+    ${a.sisaHari<=30?'<button class="mix" data-act="akBeli">Perpanjang lisensi</button>':''}<button class="plain" data-act="akKeluarTanya" style="margin-top:6px">Keluar dari akun</button></div>`;
+  return data.act?`<p class="small owner">Terdaftar untuk: ${esc(data.act.id)}</p>`:''}
+function activationKode(){
+
   const habis=LIS2.status(data.act).habis;
   app.innerHTML=`
   <header class="top"><div class="brand">🧮 Jago Matematika</div></header>
@@ -940,6 +1020,7 @@ function activation(){
     <input id="acode" type="text" autocapitalize="characters" autocomplete="off" placeholder="XXXXX-XXXXX" maxlength="14">
     <button class="mix" data-act="activate">${habis?'Perpanjang':'Aktifkan'}</button>
     <p class="small">Email atau nomor WhatsApp dan kodenya ada di pesan yang kamu terima setelah membeli. Satu kode berlaku 1 tahun sejak dibuat.</p>
+    ${AKUN.ada()?'<button class="plain" data-act="akPakaiEmail" style="border:0">Masuk dengan email saja</button>':''}
   </div>`;
   app.querySelectorAll('.act input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')tryActivate()}));
 }
@@ -1258,7 +1339,7 @@ function saya(){const p=P(),L=lvl(p.xp),a=lvlXP(L),b=lvlXP(L+1),nh=TOPICS.filter
     return `<div class="rrow"><div class="rname"><span>${t.icon} ${t.name}</span><small>${n?`${st.b} dari ${n} benar`:'Belum dicoba'}</small></div><div class="rline"><div class="rbar"><i class="${c}" style="width:${pct}%"></i></div><span class="badge ${c}">${MNAME[m]}</span></div></div>`}).join('')}
   <button class="plain" data-act="hapusCatatan">Hapus catatan ${esc(p.name)}</button>
   ${data.profiles.length>1?`<button class="plain" data-act="hapusProfil">Hapus pemain ${esc(p.name)}</button>`:''}
-  ${NEED_ACT&&data.act?`<p class="small owner">Terdaftar untuk: ${esc(data.act.id)}</p>`:''}
+  ${NEED_ACT?infoLisensi():''}
   ${nav('saya')}`;window.scrollTo(0,0)}
 function bukaTab(t){UI.tab=t;tutup();({belajar:home,arena,klasemen,saya}[t]||home)()}
 
@@ -1283,6 +1364,15 @@ document.addEventListener('click',e=>{
   if(!['ans','bs','key','periksa','kans','ckiri','ckanan','snd'].includes(a))SFX.tap();
   switch(a){
     case 'activate':tryActivate();break;
+    case 'akKirim':akKirim();break;
+    case 'akMasuk':akMasuk();break;
+    case 'akGanti':UI.ak='email';activation();break;
+    case 'akBeli':akBeli();break;
+    case 'akCek':akCek();break;
+    case 'akKeluar':akKeluar();break;
+    case 'akKeluarTanya':if(confirm('Keluar dari akun? Aplikasi akan terkunci sampai kamu masuk lagi (butuh internet). Progres belajar tetap aman.'))akKeluar();break;
+    case 'akPakaiKode':UI.pakaiKode=true;activation();break;
+    case 'akPakaiEmail':UI.pakaiKode=false;activation();break;
     case 'snd':data.mute=!data.mute;save();el.textContent=data.mute?'🔇':'🔊';if(!data.mute)SFX.right();break;
     case 'tab':bukaTab(d.tab);break;
     case 'jenjang':{const j=JENJANG.find(x=>x.id===d.j),p=P();if(!j.levels.includes(p.level))p.level=j.id==='sd'?3:j.levels[0];save();home();break}
@@ -1324,6 +1414,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='kode'
   if(S&&S.mode==='kuis'&&S.items[S.i]&&S.items[S.i].isian&&!S.dijawab&&!e.target.closest('input,textarea')){if(/^[0-9]$/.test(e.key))tekan(e.key);else if(e.key===',')tekan(',');else if(e.key==='-')tekan('−');else if(e.key==='Backspace')tekan('⌫');else if(e.key==='Enter')periksa()}});
 const app=document.getElementById('app');
 home();
+// Segarkan lisensi akun diam-diam saat online (perpanjangan/pembelian baru masuk tanpa ketik kode lagi)
+if(NEED_ACT&&AKUN.ada()&&data.akun&&data.akun.sesi){const sblm=isActive();
+  AKUN.segarkan().then(()=>{if(isActive()!==sblm&&!S)home()})}
 
 </script>
 </body>
